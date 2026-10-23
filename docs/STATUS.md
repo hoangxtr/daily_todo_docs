@@ -9,7 +9,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | Repo | Task | State |
 |---|---|---|
 | BE | 1–6 Core API (day, carry-over, status, review, search) | Merged |
-| BE | 7 Assistant tools and model | In progress (branch `feat/assistant-tools`) |
+| BE | 7 Assistant tools and model | PR #5 open (daily_todo_be), waiting for owner review and merge. Default model gemini-3.8-flash. |
 | BE | 8 Assistant streaming endpoint | Not started |
 | FE | 1–7 Core screens and assistant panel (stub) | Merged |
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
