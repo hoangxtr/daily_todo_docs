@@ -52,7 +52,7 @@ Rules:
 5. **Review.** The Claude bot reviews every PR. Fix what is worth fixing, test first. The owner merges.
 6. **Close.** In the same sitting: tick the plan's boxes, update `STATUS.md`, and update `design.md` if anything ended up different from it. When a feature's last task merges, add its line to `CHANGELOG.md`, move the plan to `plans/done/`, and remove it from `STATUS.md`.
 
-### Push and merge **[Call: owner to confirm]**
+### Push and merge **[Owner, 2026-10-23]**
 
 When a task's checks pass, the AI pushes its branch and opens the PR. It never merges and never pushes to `main`. Merging is the owner's step.
 
