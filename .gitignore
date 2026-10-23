@@ -1,0 +1,4 @@
+# The code repos live beside the docs but are their own git repos.
+backend/
+frontend/
+.DS_Store

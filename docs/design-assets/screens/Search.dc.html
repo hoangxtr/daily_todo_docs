@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ticket thread</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="journal-tokens.css">
+<link rel="stylesheet" href="ds/journal/components/bundle.css">
+<script src="ds/journal/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--paper)}
+</style>
+</helmet>
+<div style="background: var(--paper); color: var(--ink); font-family: var(--font-sans); padding: 72px 48px 64px; box-sizing: border-box;">
+  <div style="max-width: 680px; margin: 0 auto; background: var(--paper-raised); border: 1px solid var(--rule); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); padding: 16px; display: flex; flex-direction: column; gap: 16px;">
+
+    <label class="dj-input">
+      <svg class="dj-input-plus" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" style="flex: none;"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M10.5 10.5L14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+      <input type="text" value="SAAM-2134" aria-label="Search tasks and comments">
+      <kbd class="dj-kbd">Esc</kbd>
+    </label>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px;">
+      <h1 style="margin: 0; font-family: var(--font-serif); font-size: 20px; line-height: 28px; font-weight: 600;"><span class="dj-ticket">SAAM-2134</span> across 3 days</h1>
+      <span style="font-size: 13px; line-height: 18px; color: var(--ink-muted);">Tue 20 – Thu 22 Oct · 2 tasks, 1 still open · 2 notes</span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+      <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+        <section>
+          <button type="button" class="dj-review-day" style="padding-left: 0; font-weight: 500;">{{g.label}} ›</button>
+          <ul class="dj-list">
+            <sc-for list="{{g.tasks}}" as="t" hint-placeholder-count="2">
+              <x-import component-from-global-scope="Journal.TaskItem" text="{{t.text}}" status="{{t.status}}" carried-days="{{t.carried}}"></x-import>
+            </sc-for>
+          </ul>
+          <sc-if value="{{g.hasNote}}" hint-placeholder-val="{{false}}">
+            <p style="margin: 8px 8px 0; font-size: 15px; line-height: 24px; color: var(--ink);">
+              <span style="font-size: 12px; line-height: 16px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-muted); margin-right: 8px;">Note</span>{{g.noteBefore}} <span class="dj-ticket" style="background: var(--accent-soft); color: var(--accent);">SAAM-2134</span>{{g.noteAfter}}
+            </p>
+          </sc-if>
+        </section>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; padding-top: 12px; border-top: 1px solid var(--rule); font-size: 13px; line-height: 18px; color: var(--ink-muted);">
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">↑</kbd><kbd class="dj-kbd">↓</kbd> Move</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">Enter</kbd> Open day</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">Esc</kbd> Close</span>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const reply = 'Reply to Minh about SAAM-2134 retry logic';
+    const investigate = 'Investigate timeout in upstream call SAAM-2134';
+    const groups = [
+      {
+        label: 'Thu 22 Oct',
+        tasks: [{ text: reply, status: 'open', carried: 2 }],
+        hasNote: true,
+        noteBefore: 'Checked the logs for',
+        noteAfter: ': the timeout comes from the upstream call, not our retry.'
+      },
+      {
+        label: 'Wed 21 Oct',
+        tasks: [
+          { text: reply, status: 'open', carried: 1 },
+          { text: investigate, status: 'done', carried: 0 }
+        ],
+        hasNote: false,
+        noteBefore: '',
+        noteAfter: ''
+      },
+      {
+        label: 'Tue 20 Oct',
+        tasks: [
+          { text: reply, status: 'open', carried: 0 },
+          { text: investigate, status: 'open', carried: 0 }
+        ],
+        hasNote: true,
+        noteBefore: 'Minh says retries for',
+        noteAfter: ' are capped at 3. Not what the config shows.'
+      }
+    ];
+    return { groups };
+  }
+}
+</script>
+</body>
+</html>

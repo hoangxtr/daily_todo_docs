@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Look back</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="journal-tokens.css">
+<link rel="stylesheet" href="ds/journal/components/bundle.css">
+<script src="ds/journal/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--paper)}
+</style>
+</helmet>
+<div style="background: var(--paper); color: var(--ink); font-family: var(--font-sans); padding: 24px 48px 64px; box-sizing: border-box;">
+  <div style="max-width: 1120px; margin: 0 auto;">
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 48px;">
+      <span style="font-family: var(--font-serif); font-size: 17px; line-height: 24px; font-weight: 600;">Daily Journal</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <x-import component-from-global-scope="Journal.Button" kbd="⌘K">Search</x-import>
+        <x-import component-from-global-scope="Journal.Button" kbd="T">Today</x-import>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px;">
+      <div>
+        <h1 style="margin: 0; font-family: var(--font-serif); font-size: 20px; line-height: 28px; font-weight: 600;">This week</h1>
+        <span style="font-size: 13px; line-height: 18px; color: var(--ink-muted);">Mon 19 – Thu 22 Oct</span>
+      </div>
+      <x-import component-from-global-scope="Journal.PeriodSwitch" value="week" options="{{periods}}"></x-import>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 48px; margin-top: 32px; align-items: flex-start;">
+
+      <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 32px;">
+
+        <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+          <x-import component-from-global-scope="Journal.StatTile" tone="done" count="{{doneTotal}}" caption="across 4 days" selected="{{no}}"></x-import>
+          <x-import component-from-global-scope="Journal.StatTile" tone="remaining" count="{{remainingTotal}}" caption="oldest open 6 days" selected="{{yes}}"></x-import>
+        </div>
+
+        <section>
+          <h2 style="margin: 0 0 12px; font-family: var(--font-serif); font-size: 20px; line-height: 28px; font-weight: 600;">Day by day</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--rule);">
+            <sc-for list="{{days}}" as="d" hint-placeholder-count="4">
+              <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-width: 56px;">
+                <button type="button" class="dj-review-day" style="padding-left: 0;">{{d.label}}</button>
+                <div style="display: flex; flex-wrap: wrap; gap: 4px; width: 44px;">
+                  <sc-for list="{{d.marks}}" as="m" hint-placeholder-count="5">
+                    <sc-if value="{{m.isDone}}" hint-placeholder-val="{{true}}">
+                      <span aria-hidden="true" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: var(--radius-sm); background: var(--accent);"></span>
+                    </sc-if>
+                    <sc-if value="{{m.isLeft}}" hint-placeholder-val="{{false}}">
+                      <span aria-hidden="true" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: var(--radius-sm); border: 1.5px solid var(--carry);"></span>
+                    </sc-if>
+                  </sc-for>
+                </div>
+                <span style="font-size: 13px; line-height: 18px; color: var(--ink-muted); font-variant-numeric: tabular-nums;">{{d.done}} done, {{d.left}} left</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-top: 12px; font-size: 13px; line-height: 18px; color: var(--ink-muted);">
+            <span style="display: inline-flex; align-items: center; gap: 8px;"><span aria-hidden="true" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: var(--radius-sm); background: var(--accent);"></span> Finished that day</span>
+            <span style="display: inline-flex; align-items: center; gap: 8px;"><span aria-hidden="true" style="width: 12px; height: 12px; box-sizing: border-box; border-radius: var(--radius-sm); border: 1.5px solid var(--carry);"></span> Left open at the end of the day</span>
+          </div>
+        </section>
+
+      </div>
+
+      <section style="flex: 1.3 1 420px; min-width: 0;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px;">
+          <h2 style="margin: 0; font-family: var(--font-serif); font-size: 20px; line-height: 28px; font-weight: 600;">Remaining</h2>
+          <span style="font-size: 13px; line-height: 18px; color: var(--ink-muted);">Oldest first</span>
+        </div>
+        <ul class="dj-list">
+          <sc-for list="{{remaining}}" as="r" hint-placeholder-count="3">
+            <x-import component-from-global-scope="Journal.ReviewItem" text="{{r.text}}" day="{{r.day}}" status="open" open-days="{{r.openDays}}"></x-import>
+          </sc-for>
+        </ul>
+      </section>
+
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const week = [
+      { label: 'Mon 19', done: 3, left: 2 },
+      { label: 'Tue 20', done: 2, left: 3 },
+      { label: 'Wed 21', done: 3, left: 3 },
+      { label: 'Thu 22', done: 3, left: 3 }
+    ];
+    const days = week.map((d) => ({
+      ...d,
+      marks: [
+        ...Array.from({ length: d.done }, () => ({ isDone: true, isLeft: false })),
+        ...Array.from({ length: d.left }, () => ({ isDone: false, isLeft: true }))
+      ]
+    }));
+    const remaining = [
+      { text: 'Review SAAM-2161 prompt-eval PR', day: '2026-10-16', openDays: 6 },
+      { text: 'Reply to Minh about SAAM-2134 retry logic', day: '2026-10-20', openDays: 2 },
+      { text: 'Ask Linh for staging access', day: '2026-10-22', openDays: 0 }
+    ];
+    return {
+      yes: true,
+      no: false,
+      periods: [
+        { value: 'week', label: 'This week' },
+        { value: 'last-week', label: 'Last week' },
+        { value: 'month', label: 'This month' }
+      ],
+      days,
+      remaining,
+      doneTotal: week.reduce((n, d) => n + d.done, 0),
+      remainingTotal: remaining.length
+    };
+  }
+}
+</script>
+</body>
+</html>

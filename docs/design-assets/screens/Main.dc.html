@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Today</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="journal-tokens.css">
+<link rel="stylesheet" href="ds/journal/components/bundle.css">
+<script src="ds/journal/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--paper)}
+.dj-fab:hover{filter:brightness(1.08)}
+.dj-fab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</helmet>
+<div style="background: var(--paper); color: var(--ink); font-family: var(--font-sans); padding: 24px 48px 24px; box-sizing: border-box; min-height: 800px; display: flex; flex-direction: column;">
+  <div style="max-width: 1120px; width: 100%; margin: 0 auto; flex: 1;">
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 48px;">
+      <span style="font-family: var(--font-serif); font-size: 17px; line-height: 24px; font-weight: 600;">Daily Journal</span>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+        <x-import component-from-global-scope="Journal.Button" kbd="⌘K">Search</x-import>
+        <x-import component-from-global-scope="Journal.Button" kbd="R">Look back</x-import>
+      </div>
+    </div>
+
+    <x-import component-from-global-scope="Journal.DayHeader" date="2026-10-22" is-today="{{yes}}"></x-import>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px; margin-top: 12px;">
+      <x-import component-from-global-scope="Journal.ProgressMeter" done="{{done}}" total="{{total}}"></x-import>
+      <span style="font-size: 13px; line-height: 18px; color: var(--ink-muted);">3 carried in</span>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 48px; margin-top: 32px; align-items: flex-start;">
+
+      <section style="flex: 1 1 340px; min-width: 0;">
+        <h2 style="margin: 0 0 8px; font-family: var(--font-serif); font-size: 20px; line-height: 28px; font-weight: 600;">TODO</h2>
+        <ul class="dj-list">
+          <sc-for list="{{tasks}}" as="t" hint-placeholder-count="6">
+            <x-import component-from-global-scope="Journal.TaskItem" text="{{t.text}}" status="{{t.status}}" carried-days="{{t.carried}}"></x-import>
+          </sc-for>
+        </ul>
+        <div style="margin-top: 12px;">
+          <x-import component-from-global-scope="Journal.TaskInput"></x-import>
+        </div>
+      </section>
+
+      <div style="flex: 1.5 1 420px; min-width: 0;">
+        <x-import component-from-global-scope="Journal.CommentSheet" mode="read" value="{{comment}}" meta="edited 14:20"></x-import>
+      </div>
+
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--rule); font-size: 13px; line-height: 18px; color: var(--ink-muted);">
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">N</kbd> Add a task</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">Space</kbd> Done</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">[</kbd><kbd class="dj-kbd">]</kbd> Day</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">C</kbd> Comments</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">R</kbd> Look back</span>
+      <span style="display: inline-flex; align-items: center; gap: 8px;"><kbd class="dj-kbd">⌘J</kbd> Ask</span>
+    </div>
+
+  </div>
+
+  <div style="position: sticky; bottom: 24px; height: 0; margin-top: 24px;">
+    <div style="position: absolute; right: 0; bottom: 0;">
+      <button type="button" class="dj-fab" aria-label="Open assistant" title="Assistant (⌘J)" style="width: 48px; height: 48px; border-radius: 50%; border: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: var(--accent); color: var(--on-accent); box-shadow: var(--shadow-pop); cursor: pointer;">
+        <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M4 4.5h12a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H9l-3.5 3v-3H4a1 1 0 0 1-1-1v-7a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":800}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const tasks = [
+      { text: 'Reply to Minh about SAAM-2134 retry logic', status: 'open', carried: 2 },
+      { text: 'Write test for SAAM-2150 token refresh', status: 'done', carried: 1 },
+      { text: 'Review SAAM-2161 prompt-eval PR', status: 'open', carried: 6 },
+      { text: 'Draft rollout note for SAAM-2188', status: 'done', carried: 0 },
+      { text: 'Ask Linh for staging access', status: 'open', carried: 0 },
+      { text: 'Check eval run from last night', status: 'done', carried: 0 }
+    ];
+    const done = tasks.filter((t) => t.status === 'done').length;
+    return {
+      yes: true,
+      tasks,
+      done,
+      total: tasks.length,
+      comment: 'Checked the logs for SAAM-2134: the timeout comes from the upstream call, not our retry. Waiting for Minh to confirm before I change anything.\n\nQuestion for Linh: can I get read access to staging before Friday? Needed for the SAAM-2188 rollout check.\n\nRollout note is at https://wiki.example.com/rollout/saam-2188, review welcome.'
+    };
+  }
+}
+</script>
+</body>
+</html>
