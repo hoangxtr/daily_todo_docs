@@ -19,6 +19,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 
 - FE 8 browser walk-through: keyboard flow, widths 320/768/1024/1440, dark mode, focus rings (needs the owner or a browser tool).
 - Rotate the Atlas password and the Gemini key (both were shared in chat).
+- Merge FE #11 (`vercel.json` SPA rewrite: refreshing `/day/<date>` on Vercel returned 404). After the deploy, check a direct load and refresh, and that the Vercel Root Directory is `frontend`.
 - Merge BE #4 and FE #10 (CLAUDE.md now points here). Merge BE #4 before the assistant PR: `feat/assistant-tools` was branched on top of its commit. Then delete `handbook.md` from this repo.
 
 ## Known issues (deferred)
