@@ -64,7 +64,7 @@ Day, Task, Comment, Carry-over and Period are as defined in the project descript
 - **Past days** are viewable and editable. Checking an old copy done when a later copy exists marks the chain done as of that old day; the later copies show as done-elsewhere (struck, muted, "done Tue"). **[Call]**
 - **Comments:** one free-text note per day **[Owner]**, replacing the description's "several per day". Stored as typed (raw text), autosaved (debounced ~600 ms) **[Call]**. Rendered as GitHub-flavoured markdown when the note is not focused, with raw HTML never rendered and the textarea shown while editing **[Owner, 2026-10-23]**. Ticket IDs (`[A-Z][A-Z0-9]+-\d+`) and URLs are detected at render time only.
 - **Stuck:** a task carried 5 or more days gets the "stuck" row ground.
-- **Order:** tasks keep their insertion order within a day; carried-in tasks come first, in their previous order. Manual reorder is not in the first release. **[Call]**
+- **Order:** tasks keep their insertion order within a day; carried-in tasks come first, in their previous order. The owner can reorder a day's tasks by dragging or with Alt+↑/↓; the order is stored per day and is not carried forward. **[Owner, 2026-11-03]**
 
 ## 5. Data model (MongoDB) [Call]
 
@@ -84,6 +84,7 @@ JSON over HTTP under `/api`. Exact shapes are the builder's; these behaviours mu
 | `POST /api/days/{date}/tasks` | Add a task `{text}`; returns it. |
 | `PATCH /api/tasks/{id}` | Change `text` or `status`. Status changes update the chain. |
 | `DELETE /api/tasks/{id}` | Delete the task's whole chain (a mistake, not a drop). |
+| `PUT /api/days/{date}/order` | Reorder the day's tasks `{ids}`: exactly the day's task ids in the new order, else 409. Returns 204. |
 | `PUT /api/days/{date}/comment` | Save the note `{text}`. |
 | `GET /api/review?start=&end=` | Done count, Remaining count, per-day `{date, done, left}`, Done list and Remaining list (oldest first, with origin day and open days). The client computes ranges for this week, last week, this month. Weeks start Monday. |
 | `GET /api/search?q=` | Matching tasks and notes grouped by day, newest first, each with a snippet. Capped at 50 days of results. |
@@ -106,7 +107,7 @@ Conventions:
 - Components rebuilt as TypeScript, one folder each with its test: Button, Kbd, DayHeader, ProgressMeter, TaskInput, TaskItem (CarryMarker, TicketChip), CommentSheet, PeriodSwitch, StatTile, ReviewItem. The design's `bundle.js`/`bundle.css` are the reference for markup, class names and behaviour, not a dependency.
 - Fonts: Source Serif 4 (500, 600), IBM Plex Sans (400, 500, 600), IBM Plex Mono (500), from Google Fonts.
 - Containers fetch; presentational components render. Every screen has loading skeleton, empty and error states.
-- Keyboard map from the design system: N or `/` focus input; Enter adds and keeps focus; ↑↓ move; Space or X toggle; D drop; `[` `]` previous/next day; T today; G jump to date; C note; R look back; ⌘/Ctrl K search; ⌘/Ctrl J assistant; Esc closes overlays. Shortcuts never fire while typing in an input or the note.
+- Keyboard map from the design system: N or `/` focus input; Enter adds and keeps focus; ↑↓ move; Alt+↑↓ reorder the focused task; Space or X toggle; D drop; `[` `]` previous/next day; T today; G jump to date; C note; R look back; ⌘/Ctrl K search; ⌘/Ctrl J assistant; Esc closes overlays. Shortcuts never fire while typing in an input or the note.
 - WCAG 2.1 AA: real buttons, inputs and labels; visible 2 px accent focus ring; state never by colour alone; checked at 320, 768, 1024, 1440 px.
 
 ## 7a. Assistant

@@ -31,34 +31,34 @@
 
 ## Task 1 (BE): order endpoint
 
-Branch `feat/reorder-tasks` in `backend/`.
+Branch `feat/reorder-tasks` in `backend/`. PR daily_todo_be#6.
 
 **Files:** `app/schemas.py` (`OrderIn`), `app/days.py` (route), `tests/test_days.py`.
 
-- [ ] Test: reorder persists and `GET /api/days/{date}` returns the new order.
-- [ ] Test: wrong id sets (missing, extra, duplicate, unknown, non-ObjectId) return 409 or 422 and leave the order unchanged. *(Both tests are already written, uncommitted, on the branch.)*
-- [ ] See both fail for the right reason (404, no route).
-- [ ] Implement `PUT /days/{day}/order`: load the day's ids, compare as sets and lengths, `bulk_write` of `UpdateOne` setting `position`.
-- [ ] Add a "non-ObjectId" id to the validation path so it returns 409, not a 500.
-- [ ] `uv run pytest`, `ruff check .`, `ruff format --check .` pass; push; open PR.
+- [x] Test: reorder persists and `GET /api/days/{date}` returns the new order.
+- [x] Test: wrong id sets (missing, extra, duplicate, unknown, non-ObjectId) return 409 or 422 and leave the order unchanged. *(Both tests are already written, uncommitted, on the branch.)*
+- [x] See both fail for the right reason (404, no route).
+- [x] Implement `PUT /days/{day}/order`: load the day's ids, compare as sets and lengths, `bulk_write` of `UpdateOne` setting `position`.
+- [x] A non-ObjectId id returns 409 (the set comparison fails before any ObjectId is built).
+- [x] `uv run pytest`, `ruff check .`, `ruff format --check .` pass; push; open PR.
 
 **Contract change (say so in the PR):** new endpoint only; no existing shape changes.
 
 ## Task 2 (FE): drag and keyboard reorder
 
-Branch `feat/reorder-tasks` in `frontend/`. Depends on Task 1 being merged or running locally.
+Branch `feat/reorder-tasks` in `frontend/`. PR daily_todo_fe#12. Depends on Task 1 being merged or running locally.
 
 **Files:** `src/lib/api.ts` (+ test), `src/hooks/useDay.ts` (`useReorderTasks`), `src/components/TaskItem/` (handle, drag props, CSS, test), `src/pages/DayPage.tsx` (+ test, keyboard), `README.md` shortcut table.
 
-- [ ] Test: `api.reorderDay(date, ids)` sends `PUT /api/days/{date}/order` with `{ids}`.
-- [ ] Test: `useReorderTasks` moves a task in the cached day and rolls back on error.
-- [ ] Test: dropping task C above A calls the API with `[C, A, B]`; dropping in place makes no call.
-- [ ] Test: `Alt+↓` / `Alt+↑` move the focused task and keep focus on it; no-op at the ends; ignored while typing.
-- [ ] Implement. The `li` is `draggable` only while the grip handle is pressed. The handle is a real `button` with an accessible label ("Reorder: <text>") and the 2 px focus ring. Drop target shows a 2 px accent line, no animation beyond the existing 120 ms tint. Tokens only, no hex.
-- [ ] Drag state is local to `DayPage`; `TaskItem` stays presentational (props `onDragStart/onDragOver/onDrop`).
-- [ ] `npm test`, `npm run typecheck`, `npm run lint` pass.
+- [x] Test: `api.reorderDay(date, ids)` sends `PUT /api/days/{date}/order` with `{ids}`.
+- [x] Test: `useReorderTasks` moves a task in the cached day and rolls back on error.
+- [x] Test: dropping task C above A calls the API with `[C, A, B]`; dropping in place makes no call.
+- [x] Test: `Alt+↓` / `Alt+↑` move the focused task and keep focus on it; no-op at the ends; ignored while typing.
+- [x] Implement. The `li` is `draggable` only while the grip handle is pressed. The handle is a real `button` with an accessible label ("Reorder: <text>") and the 2 px focus ring. Drop target shows a 2 px accent line, no animation beyond the existing 120 ms tint. Tokens only, no hex.
+- [x] Drag state is local to `DayPage`; `TaskItem` stays presentational (props `onDragStart/onDragOver/onDrop`).
+- [x] `npm test`, `npm run typecheck`, `npm run lint` pass.
 - [ ] See it working in the browser: drag, `Alt+↑↓`, reload keeps the order, a carried-in day keeps its order after a reload.
-- [ ] Push; open PR.
+- [x] Push; open PR.
 
 ## Task 3 (docs): close
 
