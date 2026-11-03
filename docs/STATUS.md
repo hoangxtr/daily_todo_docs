@@ -14,8 +14,6 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | FE | 1–7 Core screens and assistant panel (stub) | Merged |
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
 | FE | 9 Connect assistant panel | Blocked on BE 8 |
-| BE | Reorder 1: order endpoint | PR #6 open, waiting for owner review and merge. Plan: `plans/2026-11-03-reorder-tasks.md` |
-| FE | Reorder 2: drag and Alt+↑↓ | PR #12 open, waiting for owner review and merge. Browser check passed (owner, 2026-11-03) |
 
 ## Next up
 
