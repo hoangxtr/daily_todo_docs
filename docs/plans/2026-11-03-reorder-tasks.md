@@ -57,7 +57,7 @@ Branch `feat/reorder-tasks` in `frontend/`. PR daily_todo_fe#12. Depends on Task
 - [x] Implement. The `li` is `draggable` only while the grip handle is pressed. The handle is a real `button` with an accessible label ("Reorder: <text>") and the 2 px focus ring. Drop target shows a 2 px accent line, no animation beyond the existing 120 ms tint. Tokens only, no hex.
 - [x] Drag state is local to `DayPage`; `TaskItem` stays presentational (props `onDragStart/onDragOver/onDrop`).
 - [x] `npm test`, `npm run typecheck`, `npm run lint` pass.
-- [ ] See it working in the browser: drag, `Alt+↑↓`, reload keeps the order, a carried-in day keeps its order after a reload.
+- [x] See it working in the browser (owner, 2026-11-03): drag, `Alt+↑↓`, reload keeps the order, a carried-in day keeps its order after a reload.
 - [x] Push; open PR.
 
 ## Task 3 (docs): close
