@@ -128,6 +128,7 @@ Details and the reasons behind them are in `design.md`.
 | Data storage | MongoDB Atlas (cloud). |
 | Login | None for now. |
 | Assistant | Built for real in the first build, after the core app. |
+| Assistant conversations | Stored on the server so they survive reloads and restarts; the assistant speaks the AG-UI protocol and asks before every change. Decided 2026-11-04 (reverses "kept in the browser tab"). |
 
 ## 12. Open questions
 

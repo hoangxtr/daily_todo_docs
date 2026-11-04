@@ -4,16 +4,16 @@ Updated 2026-11-04. A snapshot of now; see `../WORKING.md` for how to keep it.
 
 ## Now
 
-First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`.
+First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`, `plans/2026-11-04-assistant-agui.md`.
 
 | Repo | Task | State |
 |---|---|---|
 | BE | 1–6 Core API (day, carry-over, status, review, search) | Merged |
 | BE | 7 Assistant tools and model | PR #5 open (daily_todo_be), waiting for owner review and merge. Rebased on `main` and extended: `LLMFactory` (provider registry, Google + OpenAI, `ASSISTANT_MODEL=provider:model`, default `google:gemini-3.8-flash`), prompts in `assistant/prompt.py` (`SYSTEM_PROMPT` is a template: call sites use `.format(today=, weekday=)`, no `system_prompt()` function). Tools are module-level `TOOLS` reading `db`/`today` from a `JournalContext` in the run config (no `build_tools`). Pushed; origin is current. |
-| BE | 8 Assistant streaming endpoint | Not started |
+| BE | 8 Assistant (deep agent, AG-UI) | 8-0 design recorded. 8A/8B/8C: plan ready; one branch `feat/assistant-agui`, one PR at the end of 8C. |
 | FE | 1–7 Core screens and assistant panel (stub) | Merged |
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
-| FE | 9 Connect assistant panel | Blocked on BE 8 |
+| FE | 9 Connect assistant panel | Blocked on BE 8C; re-plan against AG-UI (`@ag-ui/client` `HttpAgent` with 1.0 interrupt outcomes and `resume[]`) |
 
 ## Next up
 

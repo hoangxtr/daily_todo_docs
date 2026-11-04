@@ -89,7 +89,9 @@ JSON over HTTP under `/api`. Exact shapes are the builder's; these behaviours mu
 | `GET /api/review?start=&end=` | Done count, Remaining count, per-day `{date, done, left}`, Done list and Remaining list (oldest first, with origin day and open days). The client computes ranges for this week, last week, this month. Weeks start Monday. |
 | `GET /api/search?q=` | Matching tasks and notes grouped by day, newest first, each with a snippet. Capped at 50 days of results. |
 | `GET /api/health` | Liveness plus a database ping. |
-| `POST /api/assistant` | Body `{messages, today}`. Streams the assistant's reply as server-sent events. See §7a. |
+| `POST /api/assistant` | Body: AG-UI `RunAgentInput` `{threadId, runId, messages, resume?, forwardedProps: {today}}`. Streams AG-UI events as server-sent events; a resume is the same request with `resume[]`. See §7a. |
+| `GET /api/assistant/threads` | Conversations `[{id, title, updated_at, pending}]`, newest first. |
+| `GET /api/assistant/threads/{id}` | `{messages, pending}`: user and assistant text, and the open questions (or `null`). 404 if unknown. |
 
 CORS allows only `CORS_ORIGINS`. Validate dates, lengths and enum values. Store text exactly as typed.
 
@@ -115,16 +117,27 @@ Conventions:
 Decided by the owner: a real assistant in the first build, built with LangChain, starting with Gemini. Everything else here is **[Call]**.
 
 - **Provider-swappable:** `LLMFactory` builds and caches the chat model from `ASSISTANT_MODEL` (`provider:model`, default `google:gemini-3.8-flash`; Google and OpenAI registered). Each provider is one builder function, so adding another is a one-place change.
-- **Tools**, built per request with the database and the client's today, and reusing the backend's own functions so carry-over and counting rules hold:
+- **Tools**, reading the database and the client's today from the run context, and reusing the backend's own functions so carry-over and counting rules hold:
   - `list_day(date)`: the day's tasks with ids, status and carried days.
   - `search(query)`: same as the search endpoint.
   - `add_task(date, text)`.
   - `set_task_status(task_id, status)`: `done`, `dropped` or `open`.
-- **Limits:** it never deletes tasks and never reads or edits notes beyond what search returns. Before add, done, drop or reopen it says what it will change and waits for the user to confirm; afterwards it says what it changed.
-- **System prompt:** today's date and long weekday, the design system's voice (short, no praise, no emoji, digits for numbers), and an instruction to say which tasks it changed.
-- **Conversation:** kept in the browser tab only. The client sends the whole history each time (at most 20 messages, each at most 4 000 characters). Nothing about the chat is stored in MongoDB.
-- **Streaming:** server-sent events: `text` (a chunk of reply), `tool` (name of a tool being used), `done` (with `changed: true` when any task was written), `error` (a short message).
-- **Failure:** no API key → `503 {"detail": "Assistant not configured"}`; provider errors → an `error` event, never a stack trace.
+- **Limits:** it never deletes tasks and never reads or edits notes beyond what search returns. The assistant is a deep agent (`create_deep_agent`) with subagents turned off, so it has no `task` tool. A hard gate pauses every `add_task` and `set_task_status` and asks the user first. **[Owner, 2026-11-04]**
+- **System prompt:** today's date and long weekday (filled per request), the design system's voice (short, no praise, no emoji, digits for numbers), and an instruction to say which tasks it changed.
+- **Conversation:** stored on the server. **[Owner, 2026-11-04]** This reverses the first design (history kept in the browser tab). Agent state lives in a LangGraph MongoDB checkpointer; an `assistant_threads` collection holds the list rows `{_id, title, created_at, updated_at, pending}`. The title is the first 60 characters of the first message. The client creates the `threadId`; the server uses only the last user message (1–4 000 characters). Renaming and deleting threads are not built.
+- **Questions:** the confirm gate and the `ask_user` tool (`single_choice`, `multi_choice`, `free_text`) pause the run with a LangGraph `interrupt()`. Each is an AG-UI `Interrupt` `{id, reason, message, tool_call_id?, metadata?}`:
+
+  | `reason` | Raised by | Answer (`payload`) |
+  |---|---|---|
+  | `confirm` | the gate | `"yes"` or `"no"` |
+  | `single_choice` | `ask_user` | a string (1–500 characters) |
+  | `multi_choice` | `ask_user` | 1–7 strings (1–500 characters each) |
+  | `free_text` | `ask_user` | a string (1–500 characters) |
+
+  Choice options are in `metadata.options` (2–6 options). Dismissing a question (`status: "cancelled"`) counts as "no" for `confirm`; `ask_user` then tells the agent the user skipped it.
+- **Protocol:** AG-UI 1.0 (`ag-ui-protocol`), events built by hand from the LangGraph stream. `RUN_STARTED`; `TEXT_MESSAGE_*`; `TOOL_CALL_*` only for the journal tools and `ask_user`; then `RUN_FINISHED` with `result: {changed}` or, when paused, `outcome: {type: "interrupt", interrupts: [...]}` (all pending questions in one event). Failure: `RUN_ERROR` with "The assistant hit a problem. Try again."
+- **Resume:** `resume[]` entries `{interruptId, status: "resolved" | "cancelled", payload?}`, matched to pending questions by id. A new message while a question is pending → 409; a resume with nothing pending → 409; ids that don't match the pending set, or a wrongly shaped answer → 422. These read the real state, not the row's `pending` flag.
+- **Failure:** no API key → `503 {"detail": "Assistant not configured"}`; provider errors → `RUN_ERROR`, never a stack trace. At most 8 model calls per run.
 
 ## 8. Repo layout [Call]
 
