@@ -42,7 +42,7 @@ Anti-goals: a screen that looks like a form, dashboard or project-management too
 | Styling | Plain CSS with the design's tokens as CSS custom properties; CSS Modules or one stylesheet per component. No Tailwind, no UI kit. | **[Call]** |
 | Frontend tests | Vitest, Testing Library | **[Call]** |
 | Assistant | LangChain with Google Gemini (`langchain-google-genai`), model name from config | **[Owner]** LangChain + Gemini; model config **[Call]** |
-| Config | Backend `.env` (git-ignored): `MONGODB_URI`, `MONGODB_DB`, `CORS_ORIGINS`, `GOOGLE_API_KEY`, `ASSISTANT_MODEL`. Frontend `.env`: `VITE_API_URL`. Each repo ships a `.env.example` with no secrets. | **[Call]** |
+| Config | Backend `.env` (git-ignored): `MONGODB_URI`, `MONGODB_DB`, `CORS_ORIGINS`, `GOOGLE_API_KEY`, `OPENAI_API_KEY`, `ASSISTANT_MODEL`. Frontend `.env`: `VITE_API_URL`. Each repo ships a `.env.example` with no secrets. | **[Call]** |
 
 Secrets: the Atlas connection string lives only in `backend/.env`, never in code, docs or commits. The password was shared in chat on 2026-10-22, so rotate it in Atlas once the app runs. Atlas Network Access must allow the machine running the backend.
 
@@ -114,7 +114,7 @@ Conventions:
 
 Decided by the owner: a real assistant in the first build, built with LangChain, starting with Gemini. Everything else here is **[Call]**.
 
-- **Provider-swappable:** the model is created in one function from config (`ASSISTANT_MODEL`, default a current Gemini Flash model), so moving to another LangChain chat model is a one-place change.
+- **Provider-swappable:** `LLMFactory` builds and caches the chat model from `ASSISTANT_MODEL` (`provider:model`, default `google:gemini-3.8-flash`; Google and OpenAI registered). Each provider is one builder function, so adding another is a one-place change.
 - **Tools**, built per request with the database and the client's today, and reusing the backend's own functions so carry-over and counting rules hold:
   - `list_day(date)`: the day's tasks with ids, status and carried days.
   - `search(query)`: same as the search endpoint.
