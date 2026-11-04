@@ -120,7 +120,7 @@ Decided by the owner: a real assistant in the first build, built with LangChain,
   - `search(query)`: same as the search endpoint.
   - `add_task(date, text)`.
   - `set_task_status(task_id, status)`: `done`, `dropped` or `open`.
-- **Limits:** it never deletes tasks and never reads or edits notes beyond what search returns. It acts without asking for add, done, drop and reopen, and says what it changed.
+- **Limits:** it never deletes tasks and never reads or edits notes beyond what search returns. Before add, done, drop or reopen it says what it will change and waits for the user to confirm; afterwards it says what it changed.
 - **System prompt:** today's date and long weekday, the design system's voice (short, no praise, no emoji, digits for numbers), and an instruction to say which tasks it changed.
 - **Conversation:** kept in the browser tab only. The client sends the whole history each time (at most 20 messages, each at most 4 000 characters). Nothing about the chat is stored in MongoDB.
 - **Streaming:** server-sent events: `text` (a chunk of reply), `tool` (name of a tool being used), `done` (with `changed: true` when any task was written), `error` (a short message).
