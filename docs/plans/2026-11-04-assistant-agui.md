@@ -183,8 +183,8 @@ Same branch, `feat/assistant-agui`. Contract change: say so in the PR.
     - pending: the AG-UI `Interrupt`s, or `null`.
 - `conftest.py`: a session fixture `checkpointer` = `MongoDBSaver(MongoClient(<test uri>), db_name=db.name)`. `clean` also empties `checkpoints` and `checkpoint_writes`. `client` also overrides `get_checkpointer`.
 
-- [ ] **Step 1:** `uv add ag-ui-protocol==1.0.0 langgraph-checkpoint-mongodb==0.5.1`; add the conftest fixture and cleanup.
-- [ ] **Step 2: Write the failing tests** in `tests/test_assistant_route.py`. Helpers:
+- [x] **Step 1:** `uv add ag-ui-protocol==1.0.0 langgraph-checkpoint-mongodb==0.5.1`; add the conftest fixture and cleanup.
+- [x] **Step 2: Write the failing tests** in `tests/test_assistant_route.py`. Helpers:
   - `script(client_app, *messages)` overrides `get_chat_model` with a `FakeToolModel`;
   - `body(thread="t1", text="hi", today="2026-11-04", resume=None)` builds camelCase `RunAgentInput` JSON with a fresh `runId`;
   - `events(resp)` parses the `data: ` lines.
@@ -205,8 +205,8 @@ Same branch, `feat/assistant-agui`. Contract change: say so in the PR.
   - `test_builtin_tools_hidden`: scripted `ls` call, then text → no `TOOL_CALL_*` event names `ls`.
   - `test_history`: after a pause, `GET /api/assistant/threads/t1` → `messages == [{"id": …, "role": "user", "content": "hi"}]`, and `pending` has 1 interrupt; after resume yes plus a scripted reply → the last message is the assistant text and `pending is None`; `GET` an unknown id → 404.
   - `test_closed_stream_still_records_pending`: drive `run_events` directly. Stop at the interrupt `RUN_FINISHED`, then `await gen.aclose()` → the thread row has `pending is True`, and a resume `POST` returns 200.
-- [ ] **Step 3:** Run `uv run pytest tests/test_assistant_route.py -v`. Expected: FAIL.
-- [ ] **Step 4:** Implement the lifespan saver, `routes.py`, the history route, and `api.include_router(routes.router)`.
-- [ ] **Step 5:** Run `uv run pytest -v` and ruff. Expected: all PASS, clean.
-- [ ] **Step 6 (real run; the owner puts `GOOGLE_API_KEY` in `.env`):** Start uvicorn. Using `curl -N`, send a read question, then a write question; answer the confirm with a `resume` request after **restarting the server** between the pause and the resume. Expected: `RUN_FINISHED` with an interrupt outcome, then after the restart the resume stream ends with `result.changed: true`. Report the output without the key.
-- [ ] **Step 7:** README: the three endpoints, the AG-UI note, `GOOGLE_API_KEY`/`ASSISTANT_MODEL`, and that each message costs model calls. `CLAUDE.md` layout: `routes.py`. Commit `feat: AG-UI assistant endpoint with server-side threads`, push, and open the one PR for 8A–8C (flag the contract change; list the three task commits).
+- [x] **Step 3:** Run `uv run pytest tests/test_assistant_route.py -v`. Expected: FAIL.
+- [x] **Step 4:** Implement the lifespan saver, `routes.py`, the history route, and `api.include_router(routes.router)`.
+- [x] **Step 5:** Run `uv run pytest -v` and ruff. Expected: all PASS, clean.
+- [x] **Step 6 (real run; the owner puts `GOOGLE_API_KEY` in `.env`):** Start uvicorn. Using `curl -N`, send a read question, then a write question; answer the confirm with a `resume` request after **restarting the server** between the pause and the resume. Expected: `RUN_FINISHED` with an interrupt outcome, then after the restart the resume stream ends with `result.changed: true`. Report the output without the key.
+- [x] **Step 7:** README: the three endpoints, the AG-UI note, `GOOGLE_API_KEY`/`ASSISTANT_MODEL`, and that each message costs model calls. `CLAUDE.md` layout: `routes.py`. Commit `feat: AG-UI assistant endpoint with server-side threads`, push, and open the one PR for 8A–8C (flag the contract change; list the three task commits).
