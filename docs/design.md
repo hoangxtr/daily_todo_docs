@@ -4,7 +4,7 @@ Date: 2026-10-22
 Status: approved by owner, 2026-10-22
 Companion docs: `project-description.md` (the problem and the owner's rules) and the visual design (Claude design artifact `4fe0d013-588d-4220-b538-d7d6f9b13b7b`: five screens plus a design system named "journal").
 
-Legend: **[Owner]** = decided by the owner. **[Call]** = chosen by the writer, not yet confirmed by the owner. Unmarked = taken from the project description or the visual design.
+Legend: **[Owner]** = decided by the owner. **[Call]** = chosen by the writer, not yet confirmed by the owner. Unmarked = taken from the project description or the visual design. Why each major choice was made, and what was rejected: `decisions/` (ADRs 0001–0011).
 
 ## 1. Intent
 

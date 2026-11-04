@@ -28,6 +28,7 @@ Each fact has one home. If you find it in two places, delete one.
 | What | Where | Update when |
 |---|---|---|
 | What and why: goals, decisions, open questions | `docs/project-description.md` | A product decision is made |
+| Why a technical decision was made: context, alternatives, consequences | `docs/decisions/NNNN-*.md` (ADRs) | The same sitting a significant decision is made; a changed decision gets a new ADR that supersedes the old one |
 | How it works: behaviour, data, API, screens | `docs/design.md` | The same day any behaviour or API changes, including during review |
 | Visual reference | `docs/design-assets/` | The design changes |
 | Work to do | `docs/plans/<YYYY-MM-DD>-<feature>.md` | Created when a feature is approved; boxes ticked as tasks finish |

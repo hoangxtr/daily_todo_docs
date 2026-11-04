@@ -118,6 +118,8 @@ Details and the reasons behind them are in `design.md`.
 
 ## 11. Decisions made
 
+The reasons and rejected alternatives for technical decisions are in `decisions/` (ADRs).
+
 | Question | Decision |
 |---|---|
 | Counting a task carried over several days | Counts once, on the day it is finished. |
