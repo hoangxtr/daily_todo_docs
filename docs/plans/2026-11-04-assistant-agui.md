@@ -68,17 +68,17 @@ Replaces Task 8 of `2026-10-22-backend.md` (Tasks 1–7 there are done). That pl
   - `ThreadOut(BaseModel)`: `id: str, title: str, updated_at: datetime, pending: bool`.
   - `router = APIRouter(prefix="/assistant")` with `GET /threads` → `list[ThreadOut]`, newest `updated_at` first. `# ponytail: no paging; one user's thread count stays small.`
 
-- [ ] **Step 1: Write the failing tests** in `tests/test_assistant_threads.py` (call the functions with the `db` fixture and read through `client`):
+- [x] **Step 1: Write the failing tests** in `tests/test_assistant_threads.py` (call the functions with the `db` fixture and read through `client`):
   - `test_empty_list`: `GET /api/assistant/threads` → 200, `[]`.
   - `test_title_is_first_60_chars_unstripped`: `create_thread(db, "t1", "  " + "x" * 70)` → the list item's `title == ("  " + "x" * 70)[:60]`, `pending is False`.
   - `test_create_is_idempotent`: create `"t1"` with `"first"`, then again with `"second"` → one row, `title == "first"`.
   - `test_newest_first`: create `t1` then `t2`, then `touch_thread(db, "t1", False)` → ids in order `["t1", "t2"]`.
   - `test_pending_round_trip`: `touch_thread(db, "t1", True)` → `pending is True`; then `False` → `False`.
   - `test_thread_exists`: `False` before create, `True` after.
-- [ ] **Step 2:** Run `uv run pytest tests/test_assistant_threads.py -v`. Expected: FAIL (import error).
-- [ ] **Step 3:** Implement `threads.py`, the index, the router include in `main.py` (`api.include_router(threads.router)`), and the `assistant_threads` cleanup in `conftest.clean`.
-- [ ] **Step 4:** Run `uv run pytest -v`, `uv run ruff check .`, `uv run ruff format --check .`. Expected: all PASS, clean.
-- [ ] **Step 5:** Add `threads.py` to the `CLAUDE.md` layout. Commit `feat: assistant thread rows and list endpoint` and push the branch (no PR yet).
+- [x] **Step 2:** Run `uv run pytest tests/test_assistant_threads.py -v`. Expected: FAIL (import error).
+- [x] **Step 3:** Implement `threads.py`, the index, the router include in `main.py` (`api.include_router(threads.router)`), and the `assistant_threads` cleanup in `conftest.clean`.
+- [x] **Step 4:** Run `uv run pytest -v`, `uv run ruff check .`, `uv run ruff format --check .`. Expected: all PASS, clean.
+- [x] **Step 5:** Add `threads.py` to the `CLAUDE.md` layout. Commit `feat: assistant thread rows and list endpoint` and push the branch (no PR yet).
 
 ---
 
