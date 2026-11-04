@@ -116,9 +116,9 @@ Same branch, `feat/assistant-agui`. Agent-level tests only, no HTTP.
   - keep the `{today}`/`{weekday}` placeholders and the other rules.
 - `tests/fakes.py`: `FakeToolModel` also overrides `_stream` (and `_astream` calling it) to yield one `ChatGenerationChunk(message=AIMessageChunk(content=m.content, tool_calls=m.tool_calls, id=m.id))` per scripted message. `GenericFakeChatModel`'s own streaming fails with "No generations found in stream" on empty-text tool-call messages.
 
-- [ ] **Step 1:** `uv add deepagents==0.7.32`. Change the `Tools` helper in `tests/test_assistant_tools.py` to call `tool.ainvoke({**args, "runtime": ToolRuntime(state={}, context=self.ctx, config={}, stream_writer=None, tool_call_id="t", store=None)})`, and update `test_system_prompt_has_date_and_weekday` to assert the new rule text. Run `uv run pytest tests/test_assistant_tools.py -v`. Expected: FAIL (tools still read `config`).
-- [ ] **Step 2:** Switch `tools.py` to `ToolRuntime` and update `prompt.py`. Run the same file. Expected: PASS.
-- [ ] **Step 3: Write the failing tests** in `tests/test_assistant_agent.py`. Use `InMemorySaver`. Helpers:
+- [x] **Step 1:** `uv add deepagents==0.7.32`. Change the `Tools` helper in `tests/test_assistant_tools.py` to call `tool.ainvoke({**args, "runtime": ToolRuntime(state={}, context=self.ctx, config={}, stream_writer=None, tool_call_id="t", store=None)})`, and update `test_system_prompt_has_date_and_weekday` to assert the new rule text. Run `uv run pytest tests/test_assistant_tools.py -v`. Expected: FAIL (tools still read `config`).
+- [x] **Step 2:** Switch `tools.py` to `ToolRuntime` and update `prompt.py`. Run the same file. Expected: PASS.
+- [x] **Step 3: Write the failing tests** in `tests/test_assistant_agent.py`. Use `InMemorySaver`. Helpers:
   - `run(agent, input, ctx, thread="t1") -> (interrupts, state)`: iterates `agent.astream(input, {"configurable": {"thread_id": thread}}, context=ctx, stream_mode=["messages", "updates"])` and collects every `__interrupt__` update;
   - `tool_msgs(state)`: the ToolMessage contents.
 
@@ -136,10 +136,10 @@ Same branch, `feat/assistant-agui`. Agent-level tests only, no HTTP.
   - `test_no_task_tool`: a `FakeToolModel` subclass that records the tool names in `bind_tools` → contains the 4 journal tools and `ask_user`; `"task"` is absent.
   - `test_prompt_uses_run_today`: a recording fake captures the system message. A run with `today="2026-11-04"` contains `Today is 2026-11-04, Wednesday.`; a second run on the same thread with `"2026-11-05"` contains `Thursday`.
   - `test_call_cap`: script 20 `list_day` calls → the fake is called exactly 8 times; no exception; the last message content contains `run limit`.
-- [ ] **Step 4:** Run `uv run pytest tests/test_assistant_agent.py -v`. Expected: FAIL (no `ask.py`/`agent.py`).
-- [ ] **Step 5:** Patch `fakes.py` (streaming, see Interfaces), then implement `ask.py` and `agent.py` per Interfaces.
-- [ ] **Step 6:** Run `uv run pytest -v` and ruff. Expected: all PASS, clean.
-- [ ] **Step 7:** Update the `CLAUDE.md` layout (`ask.py`, `agent.py`, tools read `runtime.context`). Commit `feat: deep agent with confirm gate and ask_user` and push the branch (no PR yet).
+- [x] **Step 4:** Run `uv run pytest tests/test_assistant_agent.py -v`. Expected: FAIL (no `ask.py`/`agent.py`).
+- [x] **Step 5:** Patch `fakes.py` (streaming, see Interfaces), then implement `ask.py` and `agent.py` per Interfaces.
+- [x] **Step 6:** Run `uv run pytest -v` and ruff. Expected: all PASS, clean.
+- [x] **Step 7:** Update the `CLAUDE.md` layout (`ask.py`, `agent.py`, tools read `runtime.context`). Commit `feat: deep agent with confirm gate and ask_user` and push the branch (no PR yet).
 
 ---
 
