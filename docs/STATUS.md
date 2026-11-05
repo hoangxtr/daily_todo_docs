@@ -20,6 +20,8 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 
 ## Next up
 
+- FE Day page redesign ("Focus & depth": Now card, progress ring, notes beside tasks, motion): demo approved by the owner 2026-11-05. Plan written, awaiting owner review: `plans/2026-11-05-day-focus-redesign.md` (demo `design-assets/day-focus-demo.html`). Task 11-0 (ADR 0012, design.md) comes first.
+
 - FE 8 browser walk-through: keyboard flow, widths 320/768/1024/1440, dark mode, focus rings (needs the owner or a browser tool).
 - `ASSISTANT_MODEL` in `backend/.env` names `gemini-2.5-flash`, which Google no longer serves to new keys; set it to a current model (e.g. `google:gemini-3.5-flash-lite`). `gemini-3.8-flash` returned 503 high-demand during testing.
 - BE: thread history was slow (1 s for 2 messages, 7 s for 22; `MongoDBSaver` walks parent checkpoints one Atlas round trip each). Fixed by `BatchedMongoDBSaver` (2 queries, flat ~290 ms on the real threads): PR open https://github.com/hoangxtr/daily_todo_be/pull/13, plan `plans/2026-11-05-thread-history-speed.md`. Waiting for review and merge (owner). Delete the subclass once `langgraph-checkpoint-mongodb` ships its own override (0.5.1 does not).
