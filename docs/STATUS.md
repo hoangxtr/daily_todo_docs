@@ -25,6 +25,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 - BE: `GET /assistant/threads/{id}` is slow (~1.2 s for a 2-message thread). Cause: `aget_state` rebuilds the `messages` delta channel by walking parent checkpoints, one sequential Atlas `get_tuple` (~115 ms) each, because `MongoDBSaver` uses the default `get_delta_channel_history`; cost grows with thread length. `build_agent` is cheap (5-8 ms). Options: subclass `MongoDBSaver` with a batched `get_delta_channel_history`, or store the rendered history ourselves. Not started.
 - Smoke-test thread rows `real1`-`real3` remain in the real DB (no thread delete yet).
 - Add `OPENAI_API_KEY` to `.env` to try OpenAI.
+- BE: LangSmith traces didn't show because `Settings` doesn't export `.env` to `os.environ`; fixed with `load_dotenv()` in `app/main.py`, tests forced to `LANGSMITH_TRACING=false` (PR open, see backend repo). Trace check in the LangSmith `default` project pending (owner).
 - Rotate the Atlas password and the Gemini key (both were shared in chat).
 - FE #11 (`vercel.json` SPA rewrite) is merged: check that a direct load and a refresh of `/day/<date>` work on Vercel, and that the Vercel Root Directory is `frontend`.
 
