@@ -93,8 +93,8 @@ FE branch `feat/assistant-panel` from `main`, used for 9B–9F. One PR at the en
   - `answerProblem(i: Interrupt, a: Answer | undefined): boolean`: true when the answer is missing or breaks the limits. A `cancelled` answer is always valid. confirm accepts only `"yes"`/`"no"`; multi_choice takes 1–7 strings; each string is 1–500 characters.
   - `storedThread(): string | null`, `storeThread(id: string | null): void`, and `newThreadId(): string`.
 
-- [ ] **Step 1:** `npm i -E @ag-ui/client@1.0.3 @ag-ui/core@1.0.3`.
-- [ ] **Step 2: Failing tests** in `assistant.test.ts`. Use a fake `fetch` (passed to `HttpAgent` through `vi.stubGlobal("fetch", …)`) that returns `new Response(sse([...events]))`, where `sse` joins `data: <json>\n\n`.
+- [x] **Step 1:** `npm i -E @ag-ui/client@1.0.3 @ag-ui/core@1.0.3`.
+- [x] **Step 2: Failing tests** in `assistant.test.ts`. Use a fake `fetch` (passed to `HttpAgent` through `vi.stubGlobal("fetch", …)`) that returns `new Response(sse([...events]))`, where `sse` joins `data: <json>\n\n`.
   - `text run streams and ends done`: `on.text` receives `"Hi"` and `" there"` for one message id; the result is `{ kind: "done", changed: false }`; the request body has `forwardedProps.today === todayLocal()` and the user message last.
   - `changed comes from result`: `RUN_FINISHED result {changed: true}` → `changed: true`.
   - `interrupt outcome becomes ask`: the result has `kind: "ask"` and the interrupt ids; `on.tool` received `"add_task"`.
@@ -104,8 +104,8 @@ FE branch `feat/assistant-panel` from `main`, used for 9B–9F. One PR at the en
   - `answerProblem` (table): confirm `"maybe"` → true; `"yes"` → false; single `""` → true; `"x".repeat(501)` → true; multi `[]` → true; 8 items → true; `["a", ""]` → true; `undefined` → true; `{ status: "cancelled" }` → false.
   - `makeAgent seeds history`: messages and `pendingInterrupts` come from the history.
   - `thread storage survives a throwing localStorage`.
-- [ ] **Step 3:** Run `npm test -- assistant`. Expected: FAIL. Implement. Run `npm test && npm run typecheck && npm run lint`. Expected: PASS.
-- [ ] **Step 4:** Commit `feat: AG-UI assistant client`.
+- [x] **Step 3:** Run `npm test -- assistant`. Expected: FAIL. Implement. Run `npm test && npm run typecheck && npm run lint`. Expected: PASS.
+- [x] **Step 4:** Commit `feat: AG-UI assistant client`.
 
 ### Task 9C: Panel chat over the real assistant
 
