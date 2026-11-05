@@ -60,6 +60,7 @@ Day, Task, Comment, Carry-over and Period are as defined in the project descript
 - **Status [Owner]:** `open`, `done`, `dropped`. A dropped task stops carrying, counts as neither Done nor Remaining, and can be reopened. Dropping or finishing any task in a chain closes the whole chain for carry-over.
 - **Counting [Call]:** a chain counts once. A chain finished on day D counts one Done on D. A chain still open counts one Remaining, shown with its origin day and "open N days". Earlier copies of a finished chain stay `open` on their days (honest history) and are excluded from Remaining. Per-day "left open at end of day" marks in the review are the raw open tasks of that day.
 - **Review over a range [Call]:** Done = chains whose `closed_on` (as done) falls in the range. Remaining = chains with any copy dated in the range that were still open at the end of the range (`closed_on` null or after the range end). "Open N days" counts from the origin day to the range end, or to today for the current period.
+- **Edit text [Owner, 2026-11-05]:** the task menu's Edit turns the text into an input (Enter or blur saves, Esc cancels; blank or unchanged closes). The new text applies to the whole chain, past days included, like status and delete. Not offered on the Morning handover. The assistant can do it too (`edit_task_text`, confirmed first).
 - **Delete [Call]:** deleting a task deletes its whole chain (every copy), because delete means "this was a mistake". Giving up on real work is Drop, which keeps history. The UI says so in the confirmation ("Delete this task from all 3 days").
 - **Past days** are viewable and editable. Checking an old copy done when a later copy exists marks the chain done as of that old day; the later copies show as done-elsewhere (struck, muted, "done Tue"). **[Call]**
 - **Comments:** one free-text note per day **[Owner]**, replacing the description's "several per day". Stored as typed (raw text), autosaved (debounced ~600 ms) **[Call]**. Rendered as GitHub-flavoured markdown when the note is not focused, with raw HTML never rendered and the textarea shown while editing **[Owner, 2026-10-23]**. Ticket IDs (`[A-Z][A-Z0-9]+-\d+`) and URLs are detected at render time only.
@@ -83,7 +84,7 @@ JSON over HTTP under `/api`. Exact shapes are the builder's; these behaviours mu
 | `POST /api/sync` | Body `{today}`. Runs the carry-over sync (§4) and returns `{inserted}`. 422 if `today` is more than 1 day ahead of the server's UTC date. |
 | `GET /api/days/{date}` | Day's tasks (with carried_days, chain status), its note, `{done, total}`, `carried_in` count. Read-only. |
 | `POST /api/days/{date}/tasks` | Add a task `{text}`; returns it. |
-| `PATCH /api/tasks/{id}` | Change `text` or `status`. Status changes update the chain. |
+| `PATCH /api/tasks/{id}` | Change `text` or `status`. Both apply to the whole chain: every copy gets the new text or status. **[Owner, 2026-11-05]** |
 | `DELETE /api/tasks/{id}` | Delete the task's whole chain (a mistake, not a drop). |
 | `PUT /api/days/{date}/order` | Reorder the day's tasks `{ids}`: exactly the day's task ids in the new order, else 409. Returns 204. |
 | `PUT /api/days/{date}/comment` | Save the note `{text}`. |
@@ -138,7 +139,8 @@ Decided by the owner: a real assistant in the first build, built with LangChain,
   - `search(query)`: same as the search endpoint.
   - `add_task(date, text)`.
   - `set_task_status(task_id, status)`: `done`, `dropped` or `open`.
-- **Limits:** it never deletes tasks and never reads or edits notes beyond what search returns. The assistant is a deep agent (`create_deep_agent`) with subagents turned off, so it has no `task` tool. A hard gate pauses every `add_task` and `set_task_status` and asks the user first. **[Owner, 2026-11-04]**
+  - `edit_task_text(task_id, text)`: new text (1–500 characters) on the task's whole chain.
+- **Limits:** it never deletes tasks and never reads or edits notes beyond what search returns. The assistant is a deep agent (`create_deep_agent`) with subagents turned off, so it has no `task` tool. A hard gate pauses every `add_task`, `set_task_status` and `edit_task_text` and asks the user first. **[Owner, 2026-11-04]**
 - **System prompt:** today's date and long weekday (filled per request), the design system's voice (short, no praise, no emoji, digits for numbers), and an instruction to say which tasks it changed.
 - **Conversation:** stored on the server. **[Owner, 2026-11-04]** This reverses the first design (history kept in the browser tab). Agent state lives in a LangGraph MongoDB checkpointer (`BatchedMongoDBSaver`, which reads the message history in two queries however long the thread is); an `assistant_threads` collection holds the list rows `{_id, title, created_at, updated_at, pending}`. The title is the first 60 characters of the first message. The client creates the `threadId`; the server uses only the last user message (1–4 000 characters). Renaming and deleting threads are not built.
 - **Questions:** the confirm gate and the `ask_user` tool (`single_choice`, `multi_choice`, `free_text`) pause the run with a LangGraph `interrupt()`. Each is an AG-UI `Interrupt` `{id, reason, message, tool_call_id?, metadata?}`:

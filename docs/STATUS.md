@@ -16,6 +16,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
 | FE | 9 Connect assistant panel | 9A-9E merged (PR #13). Next: 9F real run in a browser (owner). |
 | FE+BE | Assistant replies render as Markdown | Merged (BE #11, FE #15): bubble uses `MarkdownView`, shared `.dj-md` styles, prompt asks for Markdown. Not yet seen in a browser (light/dark, long list, table). |
+| FE+BE | Edit task text (whole chain) + assistant `edit_task_text` | PRs open: BE #14, FE #19; waiting for review and merge (owner). Not seen in a browser yet. |
 | FE | 10A-10D Assistant panel polish | Merged (PR #16). 10E browser check waiting on the owner. |
 | FE | 11-0 to 11E Day page focus redesign | Merged (PR #18). 11F browser check waiting on the owner. |
 
