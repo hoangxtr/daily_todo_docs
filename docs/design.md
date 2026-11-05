@@ -143,6 +143,7 @@ Decided by the owner: a real assistant in the first build, built with LangChain,
   Choice options are in `metadata.options` (2–6 options). Dismissing a question (`status: "cancelled"`) counts as "no" for `confirm`; `ask_user` then tells the agent the user skipped it.
 - **Protocol:** AG-UI 1.0 (`ag-ui-protocol`), events built by hand from the LangGraph stream. `RUN_STARTED`; `TEXT_MESSAGE_*`; `TOOL_CALL_*` only for the journal tools and `ask_user`; then `RUN_FINISHED` with `result: {changed}` or, when paused, `outcome: {type: "interrupt", interrupts: [...]}` (all pending questions in one event). Failure: `RUN_ERROR` with "The assistant hit a problem. Try again."
 - **Resume:** `resume[]` entries `{interruptId, status: "resolved" | "cancelled", payload?}`, matched to pending questions by id. A new message while a question is pending → 409; a resume with nothing pending → 409; ids that don't match the pending set, or a wrongly shaped answer → 422. These read the real state, not the row's `pending` flag.
+- **Input checks:** every tool validates its inputs and returns a corrective message the model can act on (what is wrong, the rule, where to get the right value). The confirm gate never asks about a call that would fail those checks.
 - **Failure:** no API key → `503 {"detail": "Assistant not configured"}`; provider errors → `RUN_ERROR`, never a stack trace. At most 8 model calls per run.
 
 ## 8. Repo layout [Call]
