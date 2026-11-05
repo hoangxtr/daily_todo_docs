@@ -22,3 +22,4 @@ Rules:
 | [0009](0009-server-side-conversations.md) | Assistant conversations stored on the server | Accepted |
 | [0010](0010-confirm-gate-and-ask-user.md) | Hard confirm gate and `ask_user`, both via `interrupt()` | Accepted |
 | [0011](0011-ag-ui-protocol.md) | AG-UI 1.0 with hand-built events | Accepted |
+| [0012](0012-day-page-focus-layout.md) | Day page "Focus & depth" layout | Accepted |

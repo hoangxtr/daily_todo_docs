@@ -23,7 +23,7 @@ Goals
 
 Non-goals: team features and sharing; priorities, estimates, sprints; Jira sync; reminders and notifications; authentication **[Owner]**; importing the old text history (see 10).
 
-Anti-goals: a screen that looks like a form, dashboard or project-management tool; anything that makes daily use slower than the note; celebratory UI (no praise, no emoji, no motion beyond a 120 ms fill or tint).
+Anti-goals: a screen that looks like a form, dashboard or project-management tool; anything that makes daily use slower than the note; celebratory UI (no praise, no emoji, no confetti, no sound; motion on the Day page is limited as set out in [ADR 0012](decisions/0012-day-page-focus-layout.md), elsewhere a 120 ms fill or tint).
 
 ## 3. Tech stack
 
@@ -99,7 +99,7 @@ CORS allows only `CORS_ORIGINS`. Validate dates, lengths and enum values. Store 
 ## 7. Frontend
 
 Screens, in order of importance:
-1. **Today / any day** (design board 1): header with Search and Look back, date header, progress meter with "N carried in", TODO list with input, note sheet beside it at ≥1120 px and below it otherwise, shortcut legend.
+1. **Today / any day** (design board 1; layout per [ADR 0012](decisions/0012-day-page-focus-layout.md)): header with Search and Look back; date header with a progress ring and a one-line summary (`A clean day`, `All done`, `N left`, `N left, M carried in`); a "Now" card for the first open task, then Up next, Done and Dropped; the note sheet beside the tasks at ≥980 px and below them otherwise; shortcut legend. Alt+↑/↓ and dragging reorder open tasks only.
 2. **Morning handover** (board 2): shown for today when carried-in tasks exist and none has been touched yet. Each carried task with a ticket ID shows the last sentence mentioning that ID from the most recent note (exact ticket-ID match only, no fuzzy matching **[Call]**); tasks without a ticket ID show no line; focus starts on the oldest; X done, D drop, ↓ next, N skip to new tasks.
 3. **Look back** (board 3): period switch (this week / last week / this month), Done and Remaining tiles (clicking switches the list), day-by-day marks, list items that link to their day.
 4. **Search** (board 4): a ⌘K overlay; results grouped by day, ↑↓ move, Enter opens the day.
@@ -122,7 +122,7 @@ Screens, in order of importance:
 
 Conventions:
 - The design's tokens (`journal-tokens.css`) become CSS custom properties on `:root`; components use only tokens. A dark theme from the design system's dark values, following the OS setting. **[Call]**
-- Components rebuilt as TypeScript, one folder each with its test: Button, Kbd, DayHeader, ProgressMeter, TaskInput, TaskItem (CarryMarker, TicketChip), CommentSheet, PeriodSwitch, StatTile, ReviewItem. The design's `bundle.js`/`bundle.css` are the reference for markup, class names and behaviour, not a dependency.
+- Components rebuilt as TypeScript, one folder each with its test: Button, Kbd, DayHeader, ProgressRing, NowCard, DayEmpty, TaskInput, TaskItem (CarryMarker, TicketChip), TaskMenu, CommentSheet, PeriodSwitch, StatTile, ReviewItem. The design's `bundle.js`/`bundle.css` are the reference for markup, class names and behaviour, not a dependency.
 - Fonts: Source Serif 4 (500, 600), IBM Plex Sans (400, 500, 600), IBM Plex Mono (500), from Google Fonts.
 - Containers fetch; presentational components render. Every screen has loading skeleton, empty and error states.
 - Keyboard map from the design system: N or `/` focus input; Enter adds and keeps focus; ↑↓ move; Alt+↑↓ reorder the focused task; Space or X toggle; D drop; `[` `]` previous/next day; T today; G jump to date; C note; R look back; ⌘/Ctrl K search; ⌘/Ctrl J assistant; Esc closes overlays. Shortcuts never fire while typing in an input or the note.
