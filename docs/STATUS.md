@@ -22,6 +22,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 
 - FE 8 browser walk-through: keyboard flow, widths 320/768/1024/1440, dark mode, focus rings (needs the owner or a browser tool).
 - `ASSISTANT_MODEL` in `backend/.env` names `gemini-2.5-flash`, which Google no longer serves to new keys; set it to a current model (e.g. `google:gemini-3.5-flash-lite`). `gemini-3.8-flash` returned 503 high-demand during testing.
+- BE: `GET /assistant/threads/{id}` is slow (~1.2 s for a 2-message thread). Cause: `aget_state` rebuilds the `messages` delta channel by walking parent checkpoints, one sequential Atlas `get_tuple` (~115 ms) each, because `MongoDBSaver` uses the default `get_delta_channel_history`; cost grows with thread length. `build_agent` is cheap (5-8 ms). Options: subclass `MongoDBSaver` with a batched `get_delta_channel_history`, or store the rendered history ourselves. Not started.
 - Smoke-test thread rows `real1`-`real3` remain in the real DB (no thread delete yet).
 - Add `OPENAI_API_KEY` to `.env` to try OpenAI.
 - Rotate the Atlas password and the Gemini key (both were shared in chat).
