@@ -157,7 +157,7 @@ FE branch `feat/assistant-panel` from `main`, used for 9B–9F. One PR at the en
   - `onAnswer` → `runTurn(agent, { answers })`;
   - before the run starts, append the answered line(s) to the log, using the copy in Global Constraints. `// ponytail: answered lines are client-only; history from the server shows only user/assistant text.`
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - `QuestionCard.test.tsx`:
     - `single confirm answers on Yes` (`onAnswer({ i1: { status: "resolved", payload: "yes" } })`);
     - `single choice with Other`: picking `Other` with empty text keeps Send disabled; typing `Friday` sends `"Friday"`;
@@ -170,8 +170,8 @@ FE branch `feat/assistant-panel` from `main`, used for 9B–9F. One PR at the en
     - `ask result shows the card and locks the input`;
     - `answering resumes and logs the answer line` (`Yes`, or `a; c`);
     - `restores pending card from history` (from `getThread` with `pending`).
-- [ ] **Step 2:** Run. Expected: FAIL. Implement. Run all three checks. Expected: PASS.
-- [ ] **Step 3:** Commit `feat: assistant question card`.
+- [x] **Step 2:** Run. Expected: FAIL. Implement. Run all three checks. Expected: PASS.
+- [x] **Step 3:** Commit `feat: assistant question card`.
 
 ### Task 9E: History view and New chat
 
