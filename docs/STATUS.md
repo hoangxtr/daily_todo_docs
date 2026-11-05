@@ -18,7 +18,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 
 ## Next up
 
-- Carry-over fix, plan `plans/2026-11-05-sync-endpoint.md` (written, not started; BE-1, BE-2, FE-1). Cause: a call with `today=2099-01-05` (origin never found) copied 5 open tasks to 2099, so `sync_today` skipped their chains and nothing carried to 2026-11-05. The 5 rows were deleted from the real DB on 2026-11-05. The plan adds a `today` bound, `POST /api/sync`, and a read-only `GET /api/days/{day}`.
+- Carry-over fix, plan `plans/2026-11-05-sync-endpoint.md` (BE-1 and BE-2 done in daily_todo_be PR #9, waiting for owner review; assistant `today` check still to do on top of PR #7; FE-1 not started; deploy PR #9 and FE-1 together). Cause: a call with `today=2099-01-05` (origin never found) copied 5 open tasks to 2099, so `sync_today` skipped their chains and nothing carried to 2026-11-05. The 5 rows were deleted from the real DB on 2026-11-05. The plan adds a `today` bound, `POST /api/sync`, and a read-only `GET /api/days/{day}`.
 
 - FE 8 browser walk-through: keyboard flow, widths 320/768/1024/1440, dark mode, focus rings (needs the owner or a browser tool).
 - `ASSISTANT_MODEL` in `backend/.env` names `gemini-2.5-flash`, which Google no longer serves to new keys; set it to a current model (e.g. `google:gemini-3.5-flash-lite`). `gemini-3.8-flash` returned 503 high-demand during testing.

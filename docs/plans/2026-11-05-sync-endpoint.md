@@ -46,17 +46,19 @@
 - Produces: `class SyncIn(BaseModel): today: date` in `schemas.py`.
 - Produces: `POST /api/sync` body `SyncIn`, returns `{"inserted": int}`, status 200.
 
-- [ ] **Step 1: Write the failing tests** in `backend/tests/test_sync.py`, using the `client` and `db` fixtures like `test_chains.py`:
+- [x] **Step 1: Write the failing tests** in `backend/tests/test_sync.py`, using the `client` and `db` fixtures like `test_chains.py`:
   - `test_sync_carries_open_task`: add a task on `D21`, `POST /api/sync {"today": D22}` returns `{"inserted": 1}`; a second call returns `{"inserted": 0}`.
   - `test_sync_rejects_far_future`: `POST /api/sync {"today": "2099-01-05"}` is 422 and `db.tasks.count_documents({"day": "2099-01-05"}) == 0`, with one open task present.
   - `test_sync_bound_is_utc_plus_one_day`: with `base = datetime.now(UTC).date()`, `base + 1 day` is 200 and `base + 2 days` is 422.
 - [ ] **Step 2: Add to `backend/tests/test_assistant_route.py`** a test `test_run_rejects_future_today`, copying the request helper of the existing 422 test for a bad `forwardedProps.today`, with `"2099-01-05"`. Assert 422 and no `2099-01-05` rows.
-- [ ] **Step 3: Run `uv run pytest backend/tests/test_sync.py backend/tests/test_assistant_route.py -v`.** Expected: the new tests FAIL (404 on `/api/sync`, 200 on the assistant call).
-- [ ] **Step 4: Implement `check_today(today: date) -> str` in `app/today.py`** and `SyncIn` in `schemas.py`.
-- [ ] **Step 5: Add `@router.post("/sync")` in `days.py`** with the signature `async def sync(body: SyncIn, db: DB) -> dict`. It calls `check_today`, then `sync_today(db, today)`, and returns `{"inserted": n}`.
+- [x] **Step 3: Run `uv run pytest backend/tests/test_sync.py backend/tests/test_assistant_route.py -v`.** Expected: the new tests FAIL (404 on `/api/sync`, 200 on the assistant call).
+- [x] **Step 4: Implement `check_today(today: date) -> str` in `app/today.py`** and `SyncIn` in `schemas.py`.
+- [x] **Step 5: Add `@router.post("/sync")` in `days.py`** with the signature `async def sync(body: SyncIn, db: DB) -> dict`. It calls `check_today`, then `sync_today(db, today)`, and returns `{"inserted": n}`.
 - [ ] **Step 6: In `assistant/routes.py`**, after the existing `date.fromisoformat(...)` parse, pass the parsed date through `check_today` so a future date gives the same 422 before `build_agent`.
-- [ ] **Step 7: Run the BE checks.** Expected: all pass.
-- [ ] **Step 8: Commit** (`feat/sync-endpoint`).
+- [x] **Step 7: Run the BE checks.** Expected: all pass.
+- [x] **Step 8: Commit** (`feat/sync-endpoint`).
+
+> **Done 2026-11-05, with changes:** BE-1 and BE-2 shipped in one PR (daily_todo_be#9, `feat/sync-endpoint`, from `main`). Only one new test (`test_sync_rejects_far_future`): the owner wants no redundant tests, so the carry, idempotence and UTC+1 cases are covered by `test_chains.py` pointed at `POST /api/sync`. Steps 2 and 6 (assistant) stay open: the AG-UI route exists only on PR #7, so do them on top of #7 (or on `main` once it merges).
 
 ### Task BE-2: Make `GET /api/days/{day}` read-only
 
@@ -68,19 +70,19 @@
 - Consumes: `POST /api/sync` from BE-1.
 - Produces: `GET /api/days/{day}` with no `today` parameter and no writes. Signature: `async def get_day(day: date, db: DB) -> DayOut`.
 
-- [ ] **Step 1: Write the failing tests** in `test_chains.py`:
+- [x] **Step 1: Write the failing tests** in `test_chains.py`:
   - `test_get_today_does_not_sync`: add a task on `D21`, `GET /api/days/{D22}`; assert `db.tasks.count_documents({"day": D22}) == 0` and the response has no tasks.
   - Change the `view` helper so that when `day == today` it first calls `POST /api/sync {"today": today}`, then GETs the day without `params`. Keep the other tests' assertions unchanged.
   - Change `test_concurrent_sync_no_duplicates` to gather five `POST /api/sync` calls; still assert one copy in `D22`.
-- [ ] **Step 2: Run `uv run pytest -v`.** Expected: `test_get_today_does_not_sync` FAILS (GET still syncs when given `today`; with no `today` it is a 422 today).
-- [ ] **Step 3: Remove the `today` parameter and the `sync_today` call from `get_day`.** Delete the `sync_today` import if it is unused. `load_day` is unchanged.
-- [ ] **Step 4: Fix every other test that relied on GET syncing** (grep for `"today"` in `backend/tests`; `test_days.py`, `test_review.py` and `test_assistant_tools.py` are the likely ones). The assistant's `list_day` keeps syncing; `test_list_day_syncs_today` should still pass unchanged.
-- [ ] **Step 5: Update docs.**
+- [x] **Step 2: Run `uv run pytest -v`.** Expected: `test_get_today_does_not_sync` FAILS (GET still syncs when given `today`; with no `today` it is a 422 today).
+- [x] **Step 3: Remove the `today` parameter and the `sync_today` call from `get_day`.** Delete the `sync_today` import if it is unused. `load_day` is unchanged.
+- [x] **Step 4: Fix every other test that relied on GET syncing** (grep for `"today"` in `backend/tests`; `test_days.py`, `test_review.py` and `test_assistant_tools.py` are the likely ones). The assistant's `list_day` keeps syncing; `test_list_day_syncs_today` should still pass unchanged.
+- [x] **Step 5: Update docs.**
   - design.md §4, "When copies are made": the sync is `POST /api/sync`, called by the client once per page load for its today, and never by a GET. State the `today` bound. Mark it `**[Owner, 2026-11-05]**`.
   - design.md §6 API table: add `POST /api/sync`, and remove `?today=` and "Runs the carry-over sync…" from the `GET /api/days/{date}` row.
   - `backend/README.md`: the same two table changes.
-- [ ] **Step 6: Run the BE checks.** Expected: all pass.
-- [ ] **Step 7: Commit** (`fix/get-day-read-only`).
+- [x] **Step 6: Run the BE checks.** Expected: all pass.
+- [x] **Step 7: Commit** (`fix/get-day-read-only`).
 
 ### Task FE-1: Sync once per page load, then read
 
