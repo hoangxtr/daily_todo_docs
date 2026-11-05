@@ -110,6 +110,15 @@ Screens, in order of importance:
    - The header has a `History` view (list of conversations, `Waiting` marks one with a pending question) and `New chat`; reopening the panel goes to the last thread.
    - Stop aborts the run and reloads the thread from the server, so no half reply stays behind.
    - Copy: tool progress `Checking your tasks…` / `Updating tasks…`; errors `Assistant not configured` and `The assistant hit a problem. Try again.`; answered lines `Yes`, `No`, `Skipped`, or the answers joined with `; `.
+   Polish **[Owner, 2026-11-05]** (visual reference: `design-assets/assistant-panel-demo.html`):
+   - Animated open and close from the corner button.
+   - Header with a mark, a thread subtitle and icon buttons with tooltips.
+   - Empty state with three suggestions.
+   - Assistant replies without a bubble; user messages as soft accent bubbles.
+   - Thinking dots, then a status pill while a tool runs.
+   - Copy button on replies; `Jump to latest` when scrolled up.
+   - Pill-shaped auto-growing input: Enter sends, Shift+Enter adds a line, round send/stop button.
+   - The question card slides up above the input.
 
 Conventions:
 - The design's tokens (`journal-tokens.css`) become CSS custom properties on `:root`; components use only tokens. A dark theme from the design system's dark values, following the OS setting. **[Call]**

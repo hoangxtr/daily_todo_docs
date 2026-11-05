@@ -4,7 +4,7 @@ Updated 2026-11-05. A snapshot of now; see `../WORKING.md` for how to keep it.
 
 ## Now
 
-First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`, `plans/2026-11-04-assistant-agui.md`, `plans/2026-11-05-assistant-panel.md`.
+First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`, `plans/2026-11-04-assistant-agui.md`, `plans/2026-11-05-assistant-panel.md`, `plans/2026-11-05-assistant-ui-polish.md` (drafted, awaiting owner review).
 
 | Repo | Task | State |
 |---|---|---|

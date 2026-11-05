@@ -1,0 +1,384 @@
+<title>Assistant Panel Redesign</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:wght@500;600&display=swap">
+<style>
+/* Layout: page intro, then two stages side by side: current panel (static) and proposed panel (live, clickable). Tokens copied from the Daily Journal frontend. */
+:root {
+  --paper: #f6f4ee; --paper-raised: #fffefb; --paper-sunken: #ece9e1; --rule: #dcd8cd;
+  --ink: #1e1c19; --ink-muted: #5c574e; --accent: #1d5c52; --on-accent: #ffffff; --accent-soft: #d9eae5;
+  --carry: #8a5300; --carry-soft: #f5e8cc;
+  --shadow-pop: 0 10px 36px rgba(30,28,25,.14);
+  --font-serif: "Source Serif 4", Georgia, serif;
+  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #161513; --paper-raised: #1f1d1a; --paper-sunken: #110f0e; --rule: #2f2c27;
+  --ink: #ebe7de; --ink-muted: #a9a396; --accent: #7fc6b6; --on-accent: #0f241f; --accent-soft: #1c3a33;
+  --carry: #e2b25a; --carry-soft: #3b2d12; --shadow-pop: 0 10px 36px rgba(0,0,0,.55); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #161513; --paper-raised: #1f1d1a; --paper-sunken: #110f0e; --rule: #2f2c27;
+  --ink: #ebe7de; --ink-muted: #a9a396; --accent: #7fc6b6; --on-accent: #0f241f; --accent-soft: #1c3a33;
+  --carry: #e2b25a; --carry-soft: #3b2d12; --shadow-pop: 0 10px 36px rgba(0,0,0,.55); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font: 15px/24px var(--font-sans); padding-block: 32px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1120px; margin: 0 auto; display: grid; gap: 28px; }
+h1 { font: 600 28px/34px var(--font-serif); margin: 0; text-wrap: balance; }
+.lede { margin: 6px 0 0; color: var(--ink-muted); max-width: 62ch; }
+.stages { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .stages { grid-template-columns: minmax(0, 1fr); } }
+.label { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 0 0 10px; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); }
+.label b { color: var(--ink); font-weight: 600; }
+.label span { text-transform: none; letter-spacing: 0; font-size: 13px; }
+
+.stage { position: relative; height: 640px; overflow: hidden; border: 1px solid var(--rule); border-radius: 12px; background: var(--paper); }
+/* faux journal page behind the panel */
+.page { padding: 28px 28px 0; max-width: 360px; opacity: .9; }
+.page h3 { font: 600 20px/28px var(--font-serif); margin: 0 0 2px; }
+.page small { color: var(--ink-muted); }
+.task { display: flex; gap: 10px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--rule); font-size: 14px; }
+.task i { width: 14px; height: 14px; border: 1.5px solid var(--ink-muted); border-radius: 3px; flex: none; }
+.task.done { color: var(--ink-muted); text-decoration: line-through; }
+.task.done i { background: var(--accent); border-color: var(--accent); }
+.task em { margin-left: auto; font: normal 11px var(--font-mono); color: var(--carry); background: var(--carry-soft); padding: 0 6px; border-radius: 3px; }
+
+/* ---------- CURRENT (static) ---------- */
+.old { position: absolute; right: 16px; bottom: 16px; width: min(400px, calc(100% - 32px)); height: 520px; display: flex; flex-direction: column; background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 6px 24px rgba(30,28,25,.12); overflow: hidden; }
+.old .head { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 8px 8px 8px 16px; border-bottom: 1px solid var(--rule); }
+.old h2 { flex: 1; margin: 0; font: 600 17px/24px var(--font-serif); }
+.old kbd { font: 11px var(--font-mono); border: 1px solid var(--rule); border-radius: 3px; padding: 0 5px; }
+.old .b { font: 13px var(--font-sans); border: 1px solid var(--rule); background: var(--paper-raised); color: var(--ink); border-radius: 6px; padding: 3px 9px; }
+.old .msgs { flex: 1; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.old .m { padding: 8px 12px; border-radius: 10px; max-width: 88%; }
+.old .m.u { align-self: flex-end; background: var(--accent-soft); }
+.old .m.a { background: var(--paper); }
+.old .note { font-size: 13px; color: var(--ink-muted); }
+.old .send { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--rule); }
+.old .inp { flex: 1; border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; color: var(--ink-muted); font-size: 14px; }
+.old .go { background: var(--accent); color: var(--on-accent); border-radius: 6px; padding: 6px 14px; font-size: 14px; }
+.issues { margin: 14px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13px; color: var(--ink-muted); }
+.issues li::before { content: "–"; margin-right: 8px; color: var(--carry); }
+
+/* ---------- PROPOSED (live) ---------- */
+.fab { position: absolute; right: 16px; bottom: 16px; width: 48px; height: 48px; border: 0; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); cursor: pointer; box-shadow: var(--shadow-pop); transition: transform 260ms var(--ease), opacity 160ms; }
+.fab:hover { transform: translateY(-2px) scale(1.04); }
+.fab:active { transform: scale(.96); }
+.fab.is-hidden { transform: scale(.6); opacity: 0; pointer-events: none; }
+.fab::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--accent); animation: ring 2.8s ease-out infinite; }
+.fab.is-hidden::after { animation: none; }
+@keyframes ring { 0% { transform: scale(1); opacity: .55; } 70%, 100% { transform: scale(1.55); opacity: 0; } }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.panel { position: absolute; right: 16px; bottom: 16px; width: min(400px, calc(100% - 32px)); height: min(560px, calc(100% - 32px)); display: flex; flex-direction: column; background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 16px; box-shadow: var(--shadow-pop); overflow: hidden;
+  transform-origin: bottom right; transition: transform 320ms var(--ease), opacity 200ms ease-out; }
+.panel[hidden] { display: flex !important; }
+.panel.is-closed { transform: scale(.82) translateY(14px); opacity: 0; pointer-events: none; visibility: hidden; transition: transform 240ms var(--ease), opacity 160ms ease-in, visibility 0s 240ms; }
+
+.hd { position: relative; z-index: 2; display: flex; align-items: center; gap: 10px; padding: 12px 10px 12px 16px; background: var(--paper-raised); }
+.hd::after { content: ""; position: absolute; left: 0; right: 0; top: 100%; height: 14px; background: linear-gradient(var(--paper-raised), transparent); pointer-events: none; }
+.mark { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); flex: none; }
+.ttl { flex: 1; min-width: 0; }
+.ttl h2 { margin: 0; font: 600 16px/20px var(--font-serif); }
+.ttl p { margin: 0; font-size: 12px; line-height: 16px; color: var(--ink-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ib { position: relative; width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--ink-muted); display: grid; place-items: center; cursor: pointer; transition: background 140ms, color 140ms, transform 140ms; }
+.ib:hover { background: var(--paper-sunken); color: var(--ink); }
+.ib:active { transform: scale(.92); }
+.ib[data-tip]:hover::after, .ib[data-tip]:focus-visible::after { content: attr(data-tip); position: absolute; top: calc(100% + 6px); right: 0; z-index: 5; white-space: nowrap; font-size: 12px; line-height: 16px; padding: 4px 8px; border-radius: 6px; background: var(--ink); color: var(--paper); animation: fade 140ms ease-out; pointer-events: none; }
+@keyframes fade { from { opacity: 0; transform: translateY(-3px); } }
+
+.body { position: relative; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+.msgs { flex: 1; min-height: 0; overflow-y: auto; padding: 18px 16px 8px; display: flex; flex-direction: column; gap: 14px; scroll-behavior: smooth; }
+.msg { position: relative; max-width: 88%; overflow-wrap: anywhere; animation: rise 360ms var(--ease) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+.msg.user { align-self: flex-end; background: var(--accent-soft); padding: 8px 13px; border-radius: 16px 16px 4px 16px; }
+.msg.bot { align-self: flex-start; display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; max-width: 100%; }
+.msg.bot .mark { width: 24px; height: 24px; border-radius: 8px; margin-top: 2px; }
+.msg.bot .txt { padding-top: 1px; }
+.caret::after { content: ""; display: inline-block; width: 2px; height: 1.05em; margin-left: 2px; vertical-align: -3px; background: var(--accent); animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.cp { position: absolute; right: 0; bottom: -22px; font: 12px/16px var(--font-sans); border: 0; background: none; color: var(--ink-muted); cursor: pointer; padding: 2px 6px; border-radius: 6px; opacity: 0; transition: opacity 140ms; }
+.msg.bot:hover .cp, .cp:focus-visible { opacity: 1; }
+.cp:hover { background: var(--paper-sunken); color: var(--ink); }
+
+.dots { display: inline-flex; gap: 4px; padding: 9px 0; }
+.dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-muted); animation: bob 1.1s ease-in-out infinite; }
+.dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; }
+@keyframes bob { 0%, 70%, 100% { transform: translateY(0); opacity: .45; } 35% { transform: translateY(-4px); opacity: 1; } }
+
+.tool { display: inline-flex; align-items: center; gap: 8px; align-self: flex-start; margin-left: 34px; padding: 4px 11px 4px 9px; border-radius: 999px; font-size: 13px; line-height: 20px; color: var(--ink-muted); border: 1px solid var(--rule); background: var(--paper); animation: rise 300ms var(--ease) both; }
+.tool .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 50% { transform: scale(.55); opacity: .5; } }
+.tool.ok { color: var(--ink); } .tool.ok .pulse { display: none; }
+.tool svg { display: none; color: var(--accent); }
+.tool.ok svg { display: block; animation: pop 320ms var(--ease); }
+@keyframes pop { from { transform: scale(.3); opacity: 0; } }
+
+/* empty state */
+.empty { margin: auto 0; padding: 8px 20px 20px; display: grid; gap: 14px; animation: rise 420ms var(--ease) both; }
+.empty .mark { width: 40px; height: 40px; border-radius: 13px; }
+.empty h3 { margin: 0; font: 600 22px/28px var(--font-serif); text-wrap: balance; }
+.empty p { margin: -6px 0 0; color: var(--ink-muted); font-size: 14px; }
+.chips { display: grid; gap: 8px; margin-top: 4px; }
+.chip { display: flex; align-items: center; gap: 10px; text-align: left; width: 100%; padding: 10px 12px; border: 1px solid var(--rule); border-radius: 12px; background: var(--paper); color: var(--ink); font: 14px/20px var(--font-sans); cursor: pointer; animation: rise 420ms var(--ease) both; transition: transform 200ms var(--ease), border-color 140ms, background 140ms; }
+.chip:nth-child(1) { animation-delay: 80ms; } .chip:nth-child(2) { animation-delay: 140ms; } .chip:nth-child(3) { animation-delay: 200ms; }
+.chip:hover { transform: translateX(3px); border-color: var(--accent); background: var(--paper-raised); }
+.chip:active { transform: scale(.98); }
+.chip svg { color: var(--accent); flex: none; }
+.chip span { flex: 1; }
+.chip kbd { font: 11px var(--font-mono); color: var(--ink-muted); }
+
+.jump { position: absolute; left: 50%; bottom: 10px; transform: translate(-50%, 8px); opacity: 0; pointer-events: none; display: inline-flex; gap: 6px; align-items: center; padding: 4px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper-raised); color: var(--ink); font: 13px/20px var(--font-sans); box-shadow: var(--shadow-pop); cursor: pointer; transition: transform 240ms var(--ease), opacity 160ms; z-index: 3; }
+.jump.on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; }
+
+/* question card */
+.ask { margin: 0 12px 8px; padding: 12px; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); display: grid; gap: 10px; animation: slideup 380ms var(--ease) both; }
+@keyframes slideup { from { opacity: 0; transform: translateY(18px); } }
+.ask p { margin: 0; font-size: 14px; }
+.ask .row { display: flex; gap: 8px; }
+.btn { font: 500 14px/20px var(--font-sans); padding: 6px 16px; border-radius: 10px; border: 1px solid var(--rule); background: var(--paper-raised); color: var(--ink); cursor: pointer; transition: transform 140ms, filter 140ms; }
+.btn:active { transform: scale(.97); }
+.btn.pri { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.pri:hover { filter: brightness(1.08); }
+
+/* composer */
+.comp { padding: 8px 12px 12px; }
+.pill { display: flex; align-items: flex-end; gap: 6px; padding: 6px 6px 6px 14px; border: 1px solid var(--rule); border-radius: 20px; background: var(--paper); transition: border-color 160ms, box-shadow 160ms; }
+.pill:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.pill textarea { flex: 1; min-width: 0; resize: none; border: 0; outline: 0; background: transparent; color: var(--ink); font: 15px/24px var(--font-sans); padding: 4px 0; max-height: 120px; }
+.pill textarea::placeholder { color: var(--ink-muted); }
+.pill textarea:disabled { opacity: .6; }
+.send { width: 32px; height: 32px; flex: none; border: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer; background: var(--paper-sunken); color: var(--ink-muted); transition: background 200ms, color 200ms, transform 200ms var(--ease); }
+.send.ready { background: var(--accent); color: var(--on-accent); }
+.send.ready:hover { transform: scale(1.08); }
+.send:active { transform: scale(.92); }
+.send:disabled { cursor: default; }
+.send .i-stop { display: none; } .send.stop .i-stop { display: block; } .send.stop .i-up { display: none; }
+.send.stop { background: var(--ink); color: var(--paper); }
+.hint { margin: 6px 4px 0; font-size: 12px; line-height: 16px; color: var(--ink-muted); display: flex; justify-content: space-between; }
+.hint kbd { font: 11px var(--font-mono); }
+
+.hint-demo { margin: 12px 0 0; font-size: 13px; color: var(--ink-muted); }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Assistant panel, before and after</h1>
+    <p class="lede">The right side is live. Open it, tap a suggestion or type a message, and watch the thinking dots, tool pill, streaming text and question card. It runs on canned replies, not the real backend.</p>
+  </header>
+
+  <div class="stages">
+    <section aria-label="Current panel">
+      <p class="label"><b>Today</b><span>static screenshot</span></p>
+      <div class="stage" aria-hidden="true">
+        <div class="page"><h3>Thursday, 5 Nov</h3><small>6 tasks</small>
+          <div class="task done"><i></i>Review PR #13</div><div class="task"><i></i>Browser walk-through <em>carried</em></div><div class="task"><i></i>Rotate Atlas password</div>
+        </div>
+        <div class="old">
+          <div class="head"><h2>Assistant</h2><kbd>Esc</kbd><span class="b">History</span><span class="b">New chat</span><span>×</span></div>
+          <div class="msgs">
+            <div class="m u">What's left today?</div>
+            <div class="m a">Two tasks are open: the browser walk-through and rotating the Atlas password.</div>
+            <div class="note">Checking your tasks…</div>
+          </div>
+          <div class="send"><div class="inp">Message the assistant</div><div class="go">Send</div></div>
+        </div>
+      </div>
+      <ul class="issues">
+        <li>Appears instantly, no transition</li>
+        <li>Header holds five controls in one row</li>
+        <li>Progress is a grey text line</li>
+        <li>Empty panel is blank, input is a bare box</li>
+      </ul>
+    </section>
+
+    <section aria-label="Proposed panel">
+      <p class="label"><b>Proposed</b><span>live demo</span></p>
+      <div class="stage" id="stage">
+        <div class="page"><h3>Thursday, 5 Nov</h3><small>6 tasks</small>
+          <div class="task done"><i></i>Review PR #13</div><div class="task"><i></i>Browser walk-through <em>carried</em></div><div class="task"><i></i>Rotate Atlas password</div>
+        </div>
+
+        <button class="fab" id="fab" type="button" aria-label="Open assistant" title="Open assistant (Ctrl/Cmd J)">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5l1.6 3.9 3.9 1.6-3.9 1.6L10 14.5l-1.6-3.9L4.5 9l3.9-1.6z"/><path d="M15.5 13.5v3M14 15h3"/></svg>
+        </button>
+
+        <section class="panel is-closed" id="panel" aria-label="Assistant">
+          <div class="hd">
+            <div class="mark"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5l1.6 3.9 3.9 1.6-3.9 1.6L10 14.5l-1.6-3.9L4.5 9l3.9-1.6z"/></svg></div>
+            <div class="ttl"><h2>Assistant</h2><p id="sub">New conversation</p></div>
+            <button class="ib" type="button" data-tip="History" aria-label="History"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M10 6.5V10l2.5 1.5"/></svg></button>
+            <button class="ib" id="newchat" type="button" data-tip="New chat" aria-label="New chat"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4.5v11M4.5 10h11"/></svg></button>
+            <button class="ib" id="close" type="button" data-tip="Close (Esc)" aria-label="Close assistant"><svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M5.5 5.5l9 9M14.5 5.5l-9 9"/></svg></button>
+          </div>
+
+          <div class="body">
+            <div class="msgs" id="msgs" role="log"></div>
+            <button class="jump" id="jump" type="button">Jump to latest <svg width="12" height="12" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8l5 5 5-5"/></svg></button>
+          </div>
+
+          <div id="askslot"></div>
+
+          <form class="comp" id="form">
+            <div class="pill">
+              <textarea id="draft" rows="1" placeholder="Message the assistant" aria-label="Message the assistant"></textarea>
+              <button class="send" id="send" type="submit" aria-label="Send" disabled>
+                <svg class="i-up" width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 15.5v-11M5 9.5l5-5 5 5"/></svg>
+                <svg class="i-stop" width="14" height="14" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><rect x="4" y="4" width="12" height="12" rx="2.5"/></svg>
+              </button>
+            </div>
+            <div class="hint"><span><kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for a new line</span><span><kbd>Ctrl/Cmd J</kbd></span></div>
+          </form>
+        </section>
+      </div>
+      <p class="hint-demo">Try: "What's left today?", then "Add a task" to see the question card.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const panel = $("panel"), fab = $("fab"), msgs = $("msgs"), draft = $("draft"), send = $("send"), form = $("form"), jump = $("jump"), slot = $("askslot"), sub = $("sub");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const MARK = '<div class="mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5l1.6 3.9 3.9 1.6-3.9 1.6L10 14.5l-1.6-3.9L4.5 9l3.9-1.6z"/></svg></div>';
+  const CHECK = '<svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8"/></svg>';
+  const CHIPS = [
+    ["What's left today?", "M4 6h12M4 10h12M4 14h7"],
+    ["Add a task", "M10 4.5v11M4.5 10h11"],
+    ["Summarize this week", "M4 15V9M10 15V5M16 15v-4"],
+  ];
+  const REPLIES = {
+    left: { tool: ["Checking your tasks…", "Checked 6 tasks"], text: "Two tasks are still open today: the browser walk-through, carried over from Tuesday, and rotating the Atlas password. Review PR #13 is done." },
+    week: { tool: ["Reading this week…", "Read 5 days"], text: "You closed 14 of 19 tasks this week. Three were carried over more than once, and the backend work cleared faster than the frontend." },
+    add: { tool: ["Updating tasks…", "Added to today"], ask: "Add “Smoke-test the assistant on Vercel” to today?", text: "Done. It is the last item on today's list." },
+    other: { tool: ["Checking your tasks…", "Checked 6 tasks"], text: "I looked through your journal. Nothing matches that yet, but I can add it as a task if you want." },
+  };
+  let busy = false, timers = [], stuck = true, asking = null;
+
+  const later = (fn, ms) => { const t = setTimeout(fn, reduce ? Math.min(ms, 50) : ms); timers.push(t); return t; };
+  const clearTimers = () => { timers.forEach(clearTimeout); timers = []; };
+  const toBottom = (force) => { if (force || stuck) msgs.scrollTo({ top: msgs.scrollHeight }); };
+  msgs.addEventListener("scroll", () => {
+    stuck = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 60;
+    jump.classList.toggle("on", !stuck);
+  });
+  jump.onclick = () => { stuck = true; toBottom(true); };
+
+  function renderEmpty() {
+    msgs.innerHTML = '<div class="empty">' + MARK + '<h3>What should we sort out today?</h3><p>Ask about your tasks, add one, or look back at the week.</p><div class="chips">' +
+      CHIPS.map(([t, d]) => '<button type="button" class="chip"><svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="' + d + '"/></svg><span>' + t + '</span></button>').join("") + '</div></div>';
+    msgs.querySelectorAll(".chip").forEach((c) => (c.onclick = () => submit(c.querySelector("span").textContent)));
+    sub.textContent = "New conversation";
+  }
+
+  function setBusy(b) {
+    busy = b;
+    draft.disabled = b || !!asking;
+    send.classList.toggle("stop", b);
+    send.classList.toggle("ready", b || !!draft.value.trim());
+    send.disabled = !b && !draft.value.trim();
+    send.setAttribute("aria-label", b ? "Stop" : "Send");
+    if (!b && !asking) draft.focus({ preventScroll: true });
+  }
+
+  function addUser(text) {
+    const el = document.createElement("div");
+    el.className = "msg user"; el.textContent = text; msgs.appendChild(el);
+  }
+  function addBot() {
+    const el = document.createElement("div");
+    el.className = "msg bot";
+    el.innerHTML = MARK + '<div class="txt"><span class="dots" aria-label="Thinking"><i></i><i></i><i></i></span></div><button type="button" class="cp">Copy</button>';
+    const cp = el.querySelector(".cp");
+    cp.onclick = () => {
+      const t = el.querySelector(".txt").textContent;
+      const done = () => { cp.textContent = "Copied"; setTimeout(() => (cp.textContent = "Copy"), 1200); };
+      (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(done, () => { cp.textContent = "Select text to copy"; setTimeout(() => (cp.textContent = "Copy"), 1500); });
+    };
+    msgs.appendChild(el); return el;
+  }
+
+  function submit(text) {
+    text = text.trim();
+    if (!text || busy) return;
+    if (msgs.querySelector(".empty")) msgs.innerHTML = "";
+    sub.textContent = text.length > 38 ? text.slice(0, 36) + "…" : text;
+    draft.value = ""; autosize();
+    addUser(text); stuck = true; setBusy(true);
+    const key = /left|today/i.test(text) ? "left" : /week|summar/i.test(text) ? "week" : /add|task/i.test(text) ? "add" : "other";
+    const r = REPLIES[key];
+    const bot = addBot(); toBottom(true);
+    later(() => {
+      const pill = document.createElement("div");
+      pill.className = "tool"; pill.innerHTML = '<span class="pulse"></span>' + CHECK + '<span class="t">' + r.tool[0] + "</span>";
+      msgs.appendChild(pill); toBottom();
+      later(() => {
+        pill.classList.add("ok"); pill.querySelector(".t").textContent = r.tool[1];
+        later(() => { r.ask ? ask(r, bot) : stream(bot, r.text); }, 350);
+      }, 1100);
+    }, 800);
+  }
+
+  function stream(bot, text, done) {
+    const box = bot.querySelector(".txt"); box.textContent = ""; box.classList.add("caret");
+    let i = 0;
+    (function step() {
+      if (i >= text.length) { box.classList.remove("caret"); setBusy(false); done && done(); return; }
+      i += 1 + (Math.random() > .7 ? 1 : 0);
+      box.textContent = text.slice(0, i); toBottom();
+      later(step, 18);
+    })();
+  }
+
+  function ask(r, bot) {
+    bot.querySelector(".txt").textContent = "I need a quick confirmation first.";
+    asking = true; draft.placeholder = "Answer the question above"; setBusy(false);
+    draft.disabled = true; send.disabled = true; send.classList.remove("ready");
+    slot.innerHTML = '<div class="ask" role="group" aria-label="Question"><p>' + r.ask + '</p><div class="row"><button type="button" class="btn pri" data-a="Yes">Yes</button><button type="button" class="btn" data-a="No">No</button><button type="button" class="btn" data-a="Skip" style="margin-left:auto;border-color:transparent;color:var(--ink-muted)">Skip</button></div></div>';
+    slot.querySelector(".btn.pri").focus({ preventScroll: true });
+    slot.querySelectorAll(".btn").forEach((b) => (b.onclick = () => {
+      const a = b.dataset.a; slot.innerHTML = ""; asking = null; draft.placeholder = "Message the assistant";
+      addUser(a); stuck = true; setBusy(true); toBottom(true);
+      const nb = addBot(); toBottom(true);
+      later(() => stream(nb, a === "Yes" ? r.text : "Okay, I left your list as it is."), 700);
+    }));
+  }
+
+  function stop() {
+    clearTimers(); msgs.querySelectorAll(".caret").forEach((n) => n.classList.remove("caret"));
+    msgs.querySelectorAll(".dots").forEach((d) => d.closest(".msg").remove());
+    msgs.querySelectorAll(".tool:not(.ok)").forEach((n) => n.remove());
+    setBusy(false);
+  }
+  function reset() {
+    clearTimers(); slot.innerHTML = ""; asking = null; draft.value = ""; autosize(); draft.placeholder = "Message the assistant";
+    setBusy(false); renderEmpty(); stuck = true;
+  }
+
+  function autosize() { draft.style.height = "auto"; draft.style.height = Math.min(draft.scrollHeight, 120) + "px"; }
+  draft.addEventListener("input", () => { autosize(); const has = !!draft.value.trim(); send.classList.toggle("ready", has); send.disabled = !has; });
+  draft.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+  form.addEventListener("submit", (e) => { e.preventDefault(); if (busy) { stop(); return; } submit(draft.value); });
+
+  let opener = null;
+  function toggle(open) {
+    open = open === undefined ? panel.classList.contains("is-closed") : open;
+    panel.classList.toggle("is-closed", !open); fab.classList.toggle("is-hidden", open);
+    if (open) { opener = document.activeElement; later(() => draft.focus({ preventScroll: true }), 200); }
+    else { if (busy) stop(); (fab).focus({ preventScroll: true }); }
+  }
+  fab.onclick = () => toggle(true);
+  $("close").onclick = () => toggle(false);
+  $("newchat").onclick = reset;
+  panel.addEventListener("keydown", (e) => { if (e.key === "Escape") { e.stopPropagation(); toggle(false); } });
+  document.addEventListener("keydown", (e) => { if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "j") { e.preventDefault(); toggle(); } });
+
+  renderEmpty();
+  // open once so the first still frame shows the panel
+  later(() => toggle(true), 400);
+})();
+</script>
