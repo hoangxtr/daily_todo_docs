@@ -103,6 +103,12 @@ Screens, in order of importance:
 3. **Look back** (board 3): period switch (this week / last week / this month), Done and Remaining tiles (clicking switches the list), day-by-day marks, list items that link to their day.
 4. **Search** (board 4): a ⌘K overlay; results grouped by day, ↑↓ move, Enter opens the day.
 5. **Assistant panel** (board 5): first built as UI with a stub reply, then connected to the real assistant (§7a). **[Owner]**
+   Panel design **[Owner, 2026-11-05]**:
+   - Questions appear as an inline card below the log, holding all pending questions with one `Send answer` / `Skip` row; a single confirm shows only `Yes` / `No`.
+   - The input is disabled, with the placeholder `Answer the question above`, while a question is open.
+   - The header has a `History` view (list of conversations, `Waiting` marks one with a pending question) and `New chat`; reopening the panel goes to the last thread.
+   - Stop aborts the run and reloads the thread from the server, so no half reply stays behind.
+   - Copy: tool progress `Checking your tasks…` / `Updating tasks…`; errors `Assistant not configured` and `The assistant hit a problem. Try again.`; answered lines `Yes`, `No`, `Skipped`, or the answers joined with `; `.
 
 Conventions:
 - The design's tokens (`journal-tokens.css`) become CSS custom properties on `:root`; components use only tokens. A dark theme from the design system's dark values, following the OS setting. **[Call]**

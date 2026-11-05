@@ -1,10 +1,10 @@
 # Status
 
-Updated 2026-11-04. A snapshot of now; see `../WORKING.md` for how to keep it.
+Updated 2026-11-05. A snapshot of now; see `../WORKING.md` for how to keep it.
 
 ## Now
 
-First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`, `plans/2026-11-04-assistant-agui.md`.
+First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`, `plans/2026-11-04-assistant-agui.md`, `plans/2026-11-05-assistant-panel.md`.
 
 | Repo | Task | State |
 |---|---|---|
@@ -13,7 +13,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | BE | 8 Assistant (deep agent, AG-UI) | 8-0 and 8A-8C done. PR #7 open (daily_todo_be, `feat/assistant-agui`), waiting for owner review and merge. Real run checked with `gemini-3.5-flash-lite`. |
 | FE | 1–7 Core screens and assistant panel (stub) | Merged |
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
-| FE | 9 Connect assistant panel | Blocked on BE 8C; re-plan against AG-UI (`@ag-ui/client` `HttpAgent` with 1.0 interrupt outcomes and `resume[]`) |
+| FE | 9 Connect assistant panel | Plan ready: 9A (BE copy), 9B–9F |
 
 ## Next up
 
