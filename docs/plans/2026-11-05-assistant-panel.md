@@ -191,14 +191,14 @@ FE branch `feat/assistant-panel` from `main`, used for 9B–9F. One PR at the en
   - `New chat` → abort, a new agent with `newThreadId()`, `storeThread(null)` until the first send;
   - every finished run invalidates `["assistant-threads"]`.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - ThreadList: `shows title, short date and Waiting`; `marks the current thread`; `empty state`.
   - Panel:
     - `History lists threads and picking one loads it`;
     - `New chat clears the log and the next send uses a new thread id`;
     - `list error shows Retry`.
-- [ ] **Step 2:** Run. Expected: FAIL. Implement. Run all three checks. Expected: PASS.
-- [ ] **Step 3:** Update `frontend/CLAUDE.md` (drop the stub gotcha; mention `lib/assistant.ts`) and `README.md` (the assistant needs the backend key). Commit `feat: assistant history and new chat`.
+- [x] **Step 2:** Run. Expected: FAIL. Implement. Run all three checks. Expected: PASS.
+- [x] **Step 3:** Update `frontend/CLAUDE.md` (drop the stub gotcha; mention `lib/assistant.ts`) and `README.md` (the assistant needs the backend key). Commit `feat: assistant history and new chat`.
 
 ### Task 9F: Real run and PR (owner or browser tool)
 
