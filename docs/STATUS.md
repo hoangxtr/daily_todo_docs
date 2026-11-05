@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-11-05 (Day page redesign PR open). A snapshot of now; see `../WORKING.md` for how to keep it.
+Updated 2026-11-05. A snapshot of now; see `../WORKING.md` for how to keep it.
 
 ## Now
 
@@ -17,11 +17,11 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | FE | 9 Connect assistant panel | 9A-9E merged (PR #13). Next: 9F real run in a browser (owner). |
 | FE+BE | Assistant replies render as Markdown | Merged (BE #11, FE #15): bubble uses `MarkdownView`, shared `.dj-md` styles, prompt asks for Markdown. Not yet seen in a browser (light/dark, long list, table). |
 | FE | 10A-10D Assistant panel polish | Merged (PR #16). 10E browser check waiting on the owner. |
-| FE | 11-0 to 11E Day page focus redesign | PR open: https://github.com/hoangxtr/daily_todo_fe/pull/18 (tests, typecheck, lint pass). 11F browser check waiting on the owner. |
+| FE | 11-0 to 11E Day page focus redesign | Merged (PR #18). 11F browser check waiting on the owner. |
 
 ## Next up
 
-- FE Day page redesign: built in PR #18 (above); `plans/2026-11-05-day-focus-redesign.md`, demo `design-assets/day-focus-demo.html`. Skeleton shimmer is a second infinite animation (plan says one); see PR notes.
+- FE 11F: browser walk-through of the Day page (widths 320/768/980/1024/1440, dark mode, reduced motion, keyboard, handover and Review screens). Plan `plans/done/2026-11-05-day-focus-redesign.md`, demo `design-assets/day-focus-demo.html`.
 
 - FE 8 browser walk-through: keyboard flow, widths 320/768/1024/1440, dark mode, focus rings (needs the owner or a browser tool).
 - `ASSISTANT_MODEL` in `backend/.env` names `gemini-2.5-flash`, which Google no longer serves to new keys; set it to a current model (e.g. `google:gemini-3.5-flash-lite`). `gemini-3.8-flash` returned 503 high-demand during testing.

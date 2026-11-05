@@ -12,7 +12,7 @@ The Day page was a plain list under a thin progress meter. The owner wanted the 
 ## Decision
 The Day page moves to the "Focus & depth" layout (demo tab B). **[Owner]**
 - A progress ring beside the date, a one-line summary, a "Now" card for the first open task, then Up next, Done and Dropped; notes sit beside the tasks from 980 px.
-- The anti-goal "no motion beyond a 120 ms fill or tint" is relaxed for the Day page to the motions listed in `plans/2026-11-05-day-focus-redesign.md`, all inside `prefers-reduced-motion: no-preference`.
+- The anti-goal "no motion beyond a 120 ms fill or tint" is relaxed for the Day page to the motions listed in `plans/done/2026-11-05-day-focus-redesign.md`, all inside `prefers-reduced-motion: no-preference`.
 - Still banned: praise text, confetti, emoji, sound.
 - Rounded rows and cards with tinted shadows apply to the Day page; other screens keep hairlines.
 
