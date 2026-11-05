@@ -29,4 +29,4 @@ Single-user web app replacing a plain-text daily work note. Three repos side by 
 
 Make sure `docs/STATUS.md` is current, then `gh auth switch --user hoangt_backbase`.
 
-If a code repo's `CLAUDE.md` disagrees with this file or `WORKING.md` (for example a README status table or `handbook.md`), this file wins; mention the mismatch to the user.
+If a code repo's `CLAUDE.md` disagrees with this file or `WORKING.md` (for example a README status table), this file wins; mention the mismatch to the user.

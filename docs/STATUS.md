@@ -24,7 +24,6 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 - Add `OPENAI_API_KEY` to `.env` to try OpenAI.
 - Rotate the Atlas password and the Gemini key (both were shared in chat).
 - FE #11 (`vercel.json` SPA rewrite) is merged: check that a direct load and a refresh of `/day/<date>` work on Vercel, and that the Vercel Root Directory is `frontend`.
-- Delete `handbook.md` from this repo (BE #4 and FE #10, which point CLAUDE.md at the shared workflow, are merged).
 
 ## Known issues (deferred)
 
