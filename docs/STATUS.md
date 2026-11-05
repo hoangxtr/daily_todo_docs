@@ -13,7 +13,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | BE | 8 Assistant (deep agent, AG-UI) | 8-0 and 8A-8C done. PR #7 open (daily_todo_be, `feat/assistant-agui`), waiting for owner review and merge. Real run checked with `gemini-3.5-flash-lite`. |
 | FE | 1–7 Core screens and assistant panel (stub) | Merged |
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
-| FE | 9 Connect assistant panel | Plan ready: 9A (BE copy), 9B–9F |
+| FE | 9 Connect assistant panel | 9A done (BE commit 5688219 on PR #7). Next: 9B–9F on one branch, `feat/assistant-panel`, one PR at the end of 9F |
 
 ## Next up
 

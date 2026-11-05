@@ -61,12 +61,12 @@ On the open BE branch `feat/assistant-agui` (PR #7), as one more commit. Task 8B
 - `describe` formats the date as `formatShort` does on the FE: `Thu 5 Nov`, built with `"%a %-d %b"` or an equivalent with no leading zero.
 - `CAP_TEXT = "I stopped after 8 steps. Ask again to continue."` replaces the call-cap middleware's own message wherever the client sees it: the stream and the history route. One helper serves both.
 
-- [ ] **Step 1: Failing tests:**
+- [x] **Step 1: Failing tests:**
   - the confirm message for `add_task("2026-11-05", "Call Minh")` is `Add "Call Minh" to Thu 5 Nov?`;
   - `set_task_status` confirms read `Mark "<text>" as done?` (no date, unchanged);
   - the call-cap stream test's text equals `CAP_TEXT`, and `GET /threads/{id}` shows `CAP_TEXT` as the last assistant message.
-- [ ] **Step 2:** Run them. Expected: FAIL. Implement. Run `uv run pytest -v` and ruff. Expected: PASS, clean.
-- [ ] **Step 3:** Commit `fix: assistant copy uses word dates and a plain call-cap message`, then push.
+- [x] **Step 2:** Run them. Expected: FAIL. Implement. Run `uv run pytest -v` and ruff. Expected: PASS, clean.
+- [x] **Step 3:** Commit `fix: assistant copy uses word dates and a plain call-cap message`, then push.
 
 ### Task 9B: Assistant client library
 
