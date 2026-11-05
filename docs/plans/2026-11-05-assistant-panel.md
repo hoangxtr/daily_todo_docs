@@ -125,7 +125,7 @@ FE branch `feat/assistant-panel` from `main`, used for 9B–9F. One PR at the en
   - **Counter:** `N/4000` past 3500; Send is disabled over 4000.
 - Tests: render inside a `QueryClientProvider`. Mock `../lib/assistant` (keep `answerProblem` real) and `../lib/api` `getThread`.
 
-- [ ] **Step 1: Failing tests** (delete the stub-reply tests, keep the open/close/focus/mod+j tests):
+- [x] **Step 1: Failing tests** (delete the stub-reply tests, keep the open/close/focus/mod+j tests):
   - `streams a reply`: `runTurn` calls `on.text` twice → the log shows the joined text;
   - `shows tool progress copy` for `list_day` and `add_task`;
   - `invalidates day, review and search when changed` (spy on `invalidateQueries`);
@@ -135,8 +135,8 @@ FE branch `feat/assistant-panel` from `main`, used for 9B–9F. One PR at the en
   - `unknown stored thread starts a new chat` (`getThread` rejects 404 → `storeThread(null)`);
   - `reopens the stored thread with its messages`;
   - `counter appears past 3500 and blocks over 4000`.
-- [ ] **Step 2:** Run. Expected: FAIL. Implement. Run all three checks. Expected: PASS.
-- [ ] **Step 3:** Commit `feat: assistant panel streams from the real assistant`.
+- [x] **Step 2:** Run. Expected: FAIL. Implement. Run all three checks. Expected: PASS.
+- [x] **Step 3:** Commit `feat: assistant panel streams from the real assistant`.
 
 ### Task 9D: Question card
 
