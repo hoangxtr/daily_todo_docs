@@ -106,10 +106,12 @@
 - [x] **Step 4: In `useDay.ts`**, for `date === todayLocal()` add a query keyed `["sync", today]` with `staleTime: Infinity` that calls `api.sync(today)`, and enable the day query only once it has succeeded. For any other date the day query is enabled immediately and no sync runs. Because the key includes `today`, a re-render after midnight syncs again. The mutation `onSettled` invalidations stay as they are (they must not invalidate `["sync"]`).
 - [x] **Step 5: Add `sync` to the api mock factories** in the other test files named above, so they still pass.
 - [x] **Step 6: Run the FE checks.** Expected: all pass.
-- [ ] **Step 7: Manual check** with BE and FE running: open today with an open task on an earlier day; it appears. Refresh; no duplicate. Do not try future dates against the real database.
-- [ ] **Step 8: Close-out.** Update `STATUS.md`, add a line to `CHANGELOG.md`, and move this plan to `docs/plans/done/` (WORKING.md "Close").
+- [x] **Step 7: Manual check** with BE and FE running: open today with an open task on an earlier day; it appears. Refresh; no duplicate. Do not try future dates against the real database.
+- [x] **Step 8: Close-out.** Update `STATUS.md`, add a line to `CHANGELOG.md`, and move this plan to `docs/plans/done/` (WORKING.md "Close").
 - [x] **Step 9: Commit** (`fix/sync-on-load`).
 
 > **Done 2026-11-05 except steps 7 and 8:** daily_todo_fe#14 (`fix/sync-on-load`, from `main`). Only 2 new tests (`syncs_today_once_before_reading`, `sync_error_retry`) plus a not-called assertion in `renders_day`; `api.test.ts` and `MorningHandover.test.tsx` updated for the new `getDay(date)` signature. Step 7 (manual check with both servers) is for the owner after deploying #9 and #14 together. Step 8: the plan stays here, not in `done/`, until the assistant `today` check (BE-1 steps 2 and 6) lands and the CHANGELOG line is added.
 
 > **Assistant steps (BE-1 steps 2 and 6) done 2026-11-05:** daily_todo_be#10 (`fix/assistant-future-today`, based on `feat/assistant-agui`). The test is one new case in `test_validation_422`, not a separate test. Still open for the close-out: merge #7, #9, #10, #14, check carry-over by hand (FE-1 step 7), then add the CHANGELOG line and move this plan to `done/`.
+
+> **Closed 2026-11-05:** all PRs merged (BE #7 including #9 and #10, FE #14); the owner checked carry-over by hand and it works.
