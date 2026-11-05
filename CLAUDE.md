@@ -11,6 +11,7 @@ Single-user web app replacing a plain-text daily work note. Three repos side by 
 ## While working
 
 - Delegate larger code work (a new module, a feature, multi-file changes) to a subagent: `journal-backend` for `backend/`, `journal-frontend` for `frontend/` (via the Agent tool). The main session may make small edits itself (a typo, a one-line fix, a rename, a doc tweak) when that is faster.
+- Always use Sonnet 5.5 (`claude-sonnet-5-5`) to write code: set `model: "sonnet"` on every subagent that writes or edits code.
 - Follow the flow in `WORKING.md`: decide → plan → one task per branch and PR, test first → close.
 - Each fact has one home (table in `WORKING.md`). Behaviour or API changes update `docs/design.md` the same day; product decisions go in `docs/project-description.md`.
 - Plans are append-only once work has started.
