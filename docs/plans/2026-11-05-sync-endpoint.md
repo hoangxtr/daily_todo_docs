@@ -50,11 +50,11 @@
   - `test_sync_carries_open_task`: add a task on `D21`, `POST /api/sync {"today": D22}` returns `{"inserted": 1}`; a second call returns `{"inserted": 0}`.
   - `test_sync_rejects_far_future`: `POST /api/sync {"today": "2099-01-05"}` is 422 and `db.tasks.count_documents({"day": "2099-01-05"}) == 0`, with one open task present.
   - `test_sync_bound_is_utc_plus_one_day`: with `base = datetime.now(UTC).date()`, `base + 1 day` is 200 and `base + 2 days` is 422.
-- [ ] **Step 2: Add to `backend/tests/test_assistant_route.py`** a test `test_run_rejects_future_today`, copying the request helper of the existing 422 test for a bad `forwardedProps.today`, with `"2099-01-05"`. Assert 422 and no `2099-01-05` rows.
+- [x] **Step 2: Add to `backend/tests/test_assistant_route.py`** a test `test_run_rejects_future_today`, copying the request helper of the existing 422 test for a bad `forwardedProps.today`, with `"2099-01-05"`. Assert 422 and no `2099-01-05` rows.
 - [x] **Step 3: Run `uv run pytest backend/tests/test_sync.py backend/tests/test_assistant_route.py -v`.** Expected: the new tests FAIL (404 on `/api/sync`, 200 on the assistant call).
 - [x] **Step 4: Implement `check_today(today: date) -> str` in `app/today.py`** and `SyncIn` in `schemas.py`.
 - [x] **Step 5: Add `@router.post("/sync")` in `days.py`** with the signature `async def sync(body: SyncIn, db: DB) -> dict`. It calls `check_today`, then `sync_today(db, today)`, and returns `{"inserted": n}`.
-- [ ] **Step 6: In `assistant/routes.py`**, after the existing `date.fromisoformat(...)` parse, pass the parsed date through `check_today` so a future date gives the same 422 before `build_agent`.
+- [x] **Step 6: In `assistant/routes.py`**, after the existing `date.fromisoformat(...)` parse, pass the parsed date through `check_today` so a future date gives the same 422 before `build_agent`.
 - [x] **Step 7: Run the BE checks.** Expected: all pass.
 - [x] **Step 8: Commit** (`feat/sync-endpoint`).
 
@@ -111,3 +111,5 @@
 - [x] **Step 9: Commit** (`fix/sync-on-load`).
 
 > **Done 2026-11-05 except steps 7 and 8:** daily_todo_fe#14 (`fix/sync-on-load`, from `main`). Only 2 new tests (`syncs_today_once_before_reading`, `sync_error_retry`) plus a not-called assertion in `renders_day`; `api.test.ts` and `MorningHandover.test.tsx` updated for the new `getDay(date)` signature. Step 7 (manual check with both servers) is for the owner after deploying #9 and #14 together. Step 8: the plan stays here, not in `done/`, until the assistant `today` check (BE-1 steps 2 and 6) lands and the CHANGELOG line is added.
+
+> **Assistant steps (BE-1 steps 2 and 6) done 2026-11-05:** daily_todo_be#10 (`fix/assistant-future-today`, based on `feat/assistant-agui`). The test is one new case in `test_validation_422`, not a separate test. Still open for the close-out: merge #7, #9, #10, #14, check carry-over by hand (FE-1 step 7), then add the CHANGELOG line and move this plan to `done/`.
