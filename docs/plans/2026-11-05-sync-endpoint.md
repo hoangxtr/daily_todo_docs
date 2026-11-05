@@ -96,16 +96,18 @@
 - Produces: `sync(today: string): Promise<{ inserted: number }>` and `getDay(date: string): Promise<Day>` in `api.ts`.
 - Produces: `useDay(date)` keeps returning what `DayPage` reads today (`data`, `isError`, `refetch`). For today's date, `data` stays undefined until the sync has succeeded; `isError` is true if the sync or the read failed; `refetch` re-runs whichever failed.
 
-- [ ] **Step 1: Write the failing tests** in `DayPage.test.tsx`, next to the existing `getDay` tests (add `sync: vi.fn()` to the api mock):
+- [x] **Step 1: Write the failing tests** in `DayPage.test.tsx`, next to the existing `getDay` tests (add `sync: vi.fn()` to the api mock):
   - `syncs before reading today`: render today's route; assert `api.sync` is called with today's date and `api.getDay` is called only after it resolved (use a deferred promise for `sync`).
   - `does not sync a past day`: render a past date; `api.sync` is not called.
   - `syncs once, not on refetch`: add a task (which invalidates `["day"]`); `api.getDay` is called again, `api.sync` has exactly 1 call.
   - `shows the error state when the sync fails`: `sync` rejects; the existing error UI shows and `getDay` is never called; clicking Retry calls `sync` again and then renders the tasks.
-- [ ] **Step 2: Run `npm test -- DayPage`.** Expected: the new tests FAIL.
-- [ ] **Step 3: In `api.ts`**, add `sync` (POST `/api/sync`, body `{ today }`, written like `addTask`) and drop `today` from `getDay` and its URL.
-- [ ] **Step 4: In `useDay.ts`**, for `date === todayLocal()` add a query keyed `["sync", today]` with `staleTime: Infinity` that calls `api.sync(today)`, and enable the day query only once it has succeeded. For any other date the day query is enabled immediately and no sync runs. Because the key includes `today`, a re-render after midnight syncs again. The mutation `onSettled` invalidations stay as they are (they must not invalidate `["sync"]`).
-- [ ] **Step 5: Add `sync` to the api mock factories** in the other test files named above, so they still pass.
-- [ ] **Step 6: Run the FE checks.** Expected: all pass.
+- [x] **Step 2: Run `npm test -- DayPage`.** Expected: the new tests FAIL.
+- [x] **Step 3: In `api.ts`**, add `sync` (POST `/api/sync`, body `{ today }`, written like `addTask`) and drop `today` from `getDay` and its URL.
+- [x] **Step 4: In `useDay.ts`**, for `date === todayLocal()` add a query keyed `["sync", today]` with `staleTime: Infinity` that calls `api.sync(today)`, and enable the day query only once it has succeeded. For any other date the day query is enabled immediately and no sync runs. Because the key includes `today`, a re-render after midnight syncs again. The mutation `onSettled` invalidations stay as they are (they must not invalidate `["sync"]`).
+- [x] **Step 5: Add `sync` to the api mock factories** in the other test files named above, so they still pass.
+- [x] **Step 6: Run the FE checks.** Expected: all pass.
 - [ ] **Step 7: Manual check** with BE and FE running: open today with an open task on an earlier day; it appears. Refresh; no duplicate. Do not try future dates against the real database.
 - [ ] **Step 8: Close-out.** Update `STATUS.md`, add a line to `CHANGELOG.md`, and move this plan to `docs/plans/done/` (WORKING.md "Close").
-- [ ] **Step 9: Commit** (`fix/sync-on-load`).
+- [x] **Step 9: Commit** (`fix/sync-on-load`).
+
+> **Done 2026-11-05 except steps 7 and 8:** daily_todo_fe#14 (`fix/sync-on-load`, from `main`). Only 2 new tests (`syncs_today_once_before_reading`, `sync_error_retry`) plus a not-called assertion in `renders_day`; `api.test.ts` and `MorningHandover.test.tsx` updated for the new `getDay(date)` signature. Step 7 (manual check with both servers) is for the owner after deploying #9 and #14 together. Step 8: the plan stays here, not in `done/`, until the assistant `today` check (BE-1 steps 2 and 6) lands and the CHANGELOG line is added.
