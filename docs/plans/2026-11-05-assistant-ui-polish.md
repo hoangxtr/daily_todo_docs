@@ -56,22 +56,22 @@ Follows `2026-11-05-assistant-panel.md` (Task 9). That plan's Global Constraints
 **Interfaces:**
 - Produces: `reducedMotion(): boolean` and `CLOSE_MS = 180` in `src/lib/motion.ts`. `reducedMotion` returns `false` when `window.matchMedia` is missing (jsdom).
 
-- [ ] **Step 1: Write the failing tests.** In `motion.test.ts`: `reducedMotion()` is `false` with no `matchMedia`; `true` when `matchMedia("(prefers-reduced-motion: reduce)").matches` is true. In `AssistantPanel.test.tsx`:
+- [x] **Step 1: Write the failing tests.** In `motion.test.ts`: `reducedMotion()` is `false` with no `matchMedia`; `true` when `matchMedia("(prefers-reduced-motion: reduce)").matches` is true. In `AssistantPanel.test.tsx`:
   - `close keeps the panel mounted with is-closing, then unmounts and returns focus`: click `Close assistant`; at once `region "Assistant"` has class `is-closing`; then `await waitFor` it is gone and `Open assistant` has focus.
   - `reopening during the exit cancels the close`: close, then press `mod+j` before it ends; after 300ms the region is still present and has no `is-closing`.
   - `closing during a run aborts at once`: start a run, press Esc, `abortRun` was called before the panel is gone.
   - `reduced motion unmounts at once`: stub `matchMedia` to match; after clicking close the region is gone with no `waitFor`.
   - `header buttons carry tooltips`: `History`, `New chat` and `Close assistant` have `data-tip` of `History`, `New chat`, `Close (Esc)`; no element with text `Esc` is rendered.
   - `subtitle shows the first message`: starts `New conversation`; after sending a 50-character message it shows the first 36 characters plus `…`.
-- [ ] **Step 2: Run them to see them fail.** `npm test -- motion AssistantPanel`; expect FAIL for the new tests only.
-- [ ] **Step 3: Implement.**
+- [x] **Step 2: Run them to see them fail.** `npm test -- motion AssistantPanel`; expect FAIL for the new tests only.
+- [x] **Step 3: Implement.**
   - `motion.ts` as above. `tokens.css`: the two new tokens.
   - In `AssistantPanel`, add `closing` state and a timer ref. `toggle` when open: abort the run as now; if `reducedMotion()` call `setOpen(false)`; else `setClosing(true)` and a timer of `CLOSE_MS` that calls `setOpen(false); setClosing(false)`. `toggle` when closing clears the timer and `setClosing(false)`. Clear the timer on unmount.
   - The section gets `is-closing` while `closing`. The open animation is a CSS keyframe on `.dj-assistant` (scale `0.82` and `translateY(14px)` to none, `transform-origin: bottom right`).
   - Header: a 28px `dj-mark` (sparkle SVG) on an `--accent-soft` rounded square; title block with `h2 Assistant` and a one-line ellipsised subtitle; `History`, `New chat` and `Close assistant` become 32px icon buttons (`dj-iconbtn`) with `data-tip` shown by CSS on hover and `:focus-visible`. Remove `Kbd` and `Button` imports if now unused. Panel radius becomes `--radius-xl`; add a 14px gradient fade under the header (`::after`, `pointer-events: none`).
   - FAB: hover lifts 2px, active scales to 0.96, and a slow `::after` ring pulse (2.8s, infinite, `transform` and `opacity` only).
-- [ ] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
-- [ ] **Step 5: Commit** `feat: animate the assistant panel and tidy its header`.
+- [x] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
+- [x] **Step 5: Commit** `feat: animate the assistant panel and tidy its header`.
 
 ---
 
@@ -88,15 +88,15 @@ Follows `2026-11-05-assistant-panel.md` (Task 9). That plan's Global Constraints
   - `useStickToBottom(dep: unknown): { ref: RefObject<HTMLDivElement>; stuck: boolean; jump(): void }`. `stuck` is true while within 60px of the bottom; when `dep` changes and `stuck`, it scrolls to the bottom; when not stuck it does nothing. `jump()` scrolls to the bottom and sets `stuck`. Uses `scrollTo?.(...)` as the panel does today.
 - Consumes: `RichText` from `src/lib/rich.tsx`.
 
-- [ ] **Step 1: Write the failing tests.**
+- [x] **Step 1: Write the failing tests.**
   - `Message`: user text renders plain; assistant text renders markdown (reuse the sample used by the existing `renders a markdown reply` test); `streaming` adds the caret class; clicking `Copy reply` calls `navigator.clipboard.writeText(text)` and the button shows `Copied`; a rejecting `writeText` shows `Couldn't copy` and does not throw; with `navigator.clipboard` undefined the same.
   - `Progress`: `Thinking` has role status named `Thinking`; `ToolPill` shows its label.
   - `useStickToBottom` (a test component; set `scrollHeight`, `clientHeight`, `scrollTop` with `Object.defineProperty`): at the bottom, a `dep` change calls `scrollTo` with `top: scrollHeight`; with `scrollTop` 200 short of the bottom and a `scroll` event fired, `stuck` is false and a `dep` change does not call `scrollTo`; `jump()` calls it and makes `stuck` true.
   - Panel: `Thinking` is shown between send and the first token (pending `runTurn`) and gone once the `text` callback fires; the tool label appears as a status pill and the existing tool-copy tests still pass; `Jump to latest` appears after the log is scrolled up and clicking it scrolls to the bottom; a new message while scrolled up does not call `scrollTo`.
-- [ ] **Step 2: Run them to see them fail.** Expect FAIL (modules missing).
-- [ ] **Step 3: Implement** the three units to the interfaces above, then wire the panel: render each message with `Message` (`streaming` only for the last assistant message while `running`); show `Thinking` when `running && !tool && !pending.length && msgs.at(-1)?.role !== "assistant"`; render `tool` as `ToolPill` (the `note` line for errors stays a `dj-assistant-note`); replace the manual scroll `useEffect` and `list` ref with `useStickToBottom([msgs, note, tool])`; render `Jump to latest` (a pill button, hidden unless `!stuck`) over the bottom of the log. New messages animate with the 360ms rise; the log gets `scroll-behavior: smooth`.
-- [ ] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
-- [ ] **Step 5: Commit** `feat: clearer assistant messages, thinking state and copy`.
+- [x] **Step 2: Run them to see them fail.** Expect FAIL (modules missing).
+- [x] **Step 3: Implement** the three units to the interfaces above, then wire the panel: render each message with `Message` (`streaming` only for the last assistant message while `running`); show `Thinking` when `running && !tool && !pending.length && msgs.at(-1)?.role !== "assistant"`; render `tool` as `ToolPill` (the `note` line for errors stays a `dj-assistant-note`); replace the manual scroll `useEffect` and `list` ref with `useStickToBottom([msgs, note, tool])`; render `Jump to latest` (a pill button, hidden unless `!stuck`) over the bottom of the log. New messages animate with the 360ms rise; the log gets `scroll-behavior: smooth`.
+- [x] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
+- [x] **Step 5: Commit** `feat: clearer assistant messages, thinking state and copy`.
 
 ---
 
@@ -110,17 +110,17 @@ Follows `2026-11-05-assistant-panel.md` (Task 9). That plan's Global Constraints
 - Produces: `Suggestions({ onPick }: { onPick(text: string): void }): JSX.Element`. It renders the mark, the heading and line from Global Constraints, and three buttons whose names are the three suggestion strings; a click calls `onPick` with that exact string. Buttons rise in with a 60ms stagger.
 - Consumes: the existing `send` logic in `AssistantPanel`, refactored to `submit(text: string): Promise<void>` (trim, guard on `over`, `running`, missing agent, then the current body). The form handler becomes `(e) => { e.preventDefault(); void submit(draft); }`.
 
-- [ ] **Step 1: Write the failing tests.** `Suggestions`: three buttons with the exact names; clicking each calls `onPick` with that text. Panel:
+- [x] **Step 1: Write the failing tests.** `Suggestions`: three buttons with the exact names; clicking each calls `onPick` with that text. Panel:
   - `fresh open shows the suggestions`.
   - `tapping a suggestion sends it`: `runTurn` is called with `{ text: "What's left today?" }`, the user line appears in the log, and the suggestions are gone.
   - `suggestions are hidden when the thread has history`.
   - `suggestions are hidden while a question is pending`.
   - `suggestions are hidden while a History pick is loading` (pending `getThread`), and a tap cannot reach the old agent.
   - `New chat brings the suggestions back`.
-- [ ] **Step 2: Run them to see them fail.** Expect FAIL.
-- [ ] **Step 3: Implement** `Suggestions`, the `submit` refactor, and a `loading` state set true at the start of `pick` and false when its `reload` settles. Show `Suggestions` inside the log area when `view === "chat" && !msgs.length && !running && !pending.length && !loading`.
-- [ ] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
-- [ ] **Step 5: Commit** `feat: assistant empty state with suggestions`.
+- [x] **Step 2: Run them to see them fail.** Expect FAIL.
+- [x] **Step 3: Implement** `Suggestions`, the `submit` refactor, and a `loading` state set true at the start of `pick` and false when its `reload` settles. Show `Suggestions` inside the log area when `view === "chat" && !msgs.length && !running && !pending.length && !loading`.
+- [x] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
+- [x] **Step 5: Commit** `feat: assistant empty state with suggestions`.
 
 ---
 
@@ -134,7 +134,7 @@ Follows `2026-11-05-assistant-panel.md` (Task 9). That plan's Global Constraints
 - Produces: `Composer(props: { draft: string; max: number; running: boolean; locked: boolean; placeholder: string; inputRef: Ref<HTMLTextAreaElement>; onChange(v: string): void; onSend(): void; onStop(): void }): JSX.Element`. It renders the `<form>`, a pill containing a `textarea` (label `Message the assistant`, `rows=1`, grows to a 120px maximum by setting `style.height` from `scrollHeight`) and a round 32px button, the hint line, and the `N/4000` counter past 3500. The button is `Send` (icon, disabled when blank, over `max`, or `locked`) and turns accent-filled when it can send; while `running` it is `Stop` (square icon, `autoFocus`, keyed apart from Send as today). The textarea is disabled while `running` or `locked`.
 - Consumes: `submit` from 10C via `onSend`; `agent.current?.abortRun()` via `onStop`.
 
-- [ ] **Step 1: Write the failing tests** (`Composer.test.tsx`):
+- [x] **Step 1: Write the failing tests** (`Composer.test.tsx`):
   - `Enter calls onSend`.
   - `Shift+Enter inserts a newline and does not send`.
   - `Enter during IME composition does not send` (`fireEvent.keyDown` with `isComposing: true`).
@@ -143,10 +143,10 @@ Follows `2026-11-05-assistant-panel.md` (Task 9). That plan's Global Constraints
   - `running shows Stop with focus and calls onStop`.
   - `locked disables the textarea and Send`.
   The existing panel tests (counter, Stop focus, placeholders, locked input) are the regression check and must pass unchanged apart from any `HTMLInputElement` type use.
-- [ ] **Step 2: Run them to see them fail.** Expect FAIL (module missing).
-- [ ] **Step 3: Implement** `Composer` to the interface, then replace the form in `AssistantPanel` with it (`inputRef` becomes `useRef<HTMLTextAreaElement>`; `locked` is `pending.length > 0`; draft is trimmed on send but keeps inner newlines). The pill gets a 3px `--accent-soft` focus halo plus the 2px accent focus ring on the textarea's container. In `QuestionCard.css`, the card slides up (`translateY(18px)` to none, 380ms) when it mounts.
-- [ ] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
-- [ ] **Step 5: Commit** `feat: pill composer and animated question card`.
+- [x] **Step 2: Run them to see them fail.** Expect FAIL (module missing).
+- [x] **Step 3: Implement** `Composer` to the interface, then replace the form in `AssistantPanel` with it (`inputRef` becomes `useRef<HTMLTextAreaElement>`; `locked` is `pending.length > 0`; draft is trimmed on send but keeps inner newlines). The pill gets a 3px `--accent-soft` focus halo plus the 2px accent focus ring on the textarea's container. In `QuestionCard.css`, the card slides up (`translateY(18px)` to none, 380ms) when it mounts.
+- [x] **Step 4: Run the full suite, typecheck and lint.** Expect all PASS.
+- [x] **Step 5: Commit** `feat: pill composer and animated question card`.
 
 ---
 

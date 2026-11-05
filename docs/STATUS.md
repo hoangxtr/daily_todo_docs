@@ -4,7 +4,7 @@ Updated 2026-11-05. A snapshot of now; see `../WORKING.md` for how to keep it.
 
 ## Now
 
-First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`, `plans/2026-11-04-assistant-agui.md`, `plans/2026-11-05-assistant-panel.md`, `plans/2026-11-05-assistant-ui-polish.md` (drafted, awaiting owner review).
+First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-22-frontend.md`, `plans/2026-11-04-assistant-agui.md`, `plans/2026-11-05-assistant-panel.md`, `plans/2026-11-05-assistant-ui-polish.md`.
 
 | Repo | Task | State |
 |---|---|---|
@@ -16,6 +16,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
 | FE | 9 Connect assistant panel | 9A-9E merged (PR #13). Next: 9F real run in a browser (owner). |
 | FE+BE | Assistant replies render as Markdown | Merged (BE #11, FE #15): bubble uses `MarkdownView`, shared `.dj-md` styles, prompt asks for Markdown. Not yet seen in a browser (light/dark, long list, table). |
+| FE | 10A-10D Assistant panel polish | PR open: https://github.com/hoangxtr/daily_todo_fe/pull/16 (tests, typecheck, lint pass). 10E browser check waiting on the owner. |
 
 ## Next up
 
