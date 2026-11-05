@@ -10,7 +10,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 |---|---|---|
 | BE | 1–6 Core API (day, carry-over, status, review, search) | Merged |
 | BE | 7 Assistant tools and model | PR #5 open (daily_todo_be), waiting for owner review and merge. Rebased on `main` and extended: `LLMFactory` (provider registry, Google + OpenAI, `ASSISTANT_MODEL=provider:model`, default `google:gemini-3.8-flash`), prompts in `assistant/prompt.py` (`SYSTEM_PROMPT` is a template: call sites use `.format(today=, weekday=)`, no `system_prompt()` function). Tools are module-level `TOOLS` reading `db`/`today` from a `JournalContext` in the run config (no `build_tools`). Pushed; origin is current. |
-| BE | 8 Assistant (deep agent, AG-UI) | 8-0 and 8A-8C done. PR #7 open (daily_todo_be, `feat/assistant-agui`), waiting for owner review and merge. Real run checked with `gemini-3.5-flash-lite`. |
+| BE | 8 Assistant (deep agent, AG-UI) | 8-0 and 8A-8C done. PR #7 open (daily_todo_be, `feat/assistant-agui`), waiting for owner review and merge. Real run checked with `gemini-3.5-flash-lite`. ab37112 drops the ignored Gemini `temperature` (silences the warning). |
 | FE | 1–7 Core screens and assistant panel (stub) | Merged |
 | FE | 8 End-to-end check | In progress: API checks pass; browser walk-through pending (branch `docs/task-8-api-check`) |
 | FE | 9 Connect assistant panel | 9A done (BE commit 5688219 on PR #7). 9B done (FE 8b333ce on `feat/assistant-panel`). 9C done (2f83ebd, fix d6576e8). 9D done (36568d5, fix c3766c1). 9E done (012a7f9, fixes 6e6072b, 97ba42f). Final review fixes 938ec37. Next: 9F real run (owner + GOOGLE_API_KEY in backend/.env), then the one PR for 9B–9E, `feat/assistant-panel`, one PR at the end of 9F |
