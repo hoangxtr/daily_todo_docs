@@ -23,6 +23,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 ## Next up
 
 - FE+BE `ask_user` in history: answered questions show as an assistant line, the answer as a user line, live and after a reload. BE merged (PR #15, with the routes refactor and the complexity guard: `.githooks` pre-commit, `ci.yml` lint on PRs, max McCabe 10; run `git config core.hooksPath .githooks` once per clone). FE #20 waiting for review and merge (owner). Browser check pending: answer a question, reload, reopen from History. Then add the CHANGELOG line and move `plans/2026-11-07-ask-user-history.md` to `done/`.
+- FE QuestionCard clipped with many questions (panel `overflow: hidden`): CSS fix `max-height: 70%; overflow-y: auto` on `.dj-qcard`, uncommitted on `feat/ask-user-history`. Needs a browser check with 5+ questions.
 - FE 11F: browser walk-through of the Day page (widths 320/768/980/1024/1440, dark mode, reduced motion, keyboard, handover and Review screens). Plan `plans/done/2026-11-05-day-focus-redesign.md`, demo `design-assets/day-focus-demo.html`.
 
 - FE 8 browser walk-through: keyboard flow, widths 320/768/1024/1440, dark mode, focus rings (needs the owner or a browser tool).
