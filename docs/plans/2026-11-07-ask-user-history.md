@@ -57,22 +57,22 @@ git push
 - Consumes: `SKIPPED` from `app.assistant.tools`; `ToolMessage` from `langchain_core.messages`; the test helpers `script`, `call`, `pause`, `interrupts`, `yes`, `body`, `URL` already in that test file.
 - Produces: `GET /api/assistant/threads/{id}` → `messages` containing, per answered `ask_user` call, `{id: "<call id>:q", role: "assistant", content: <question>}` then `{id: "<call id>:a", role: "user", content: <answer>}`. Task 3 relies on these ids and roles.
 
-- [ ] **Step 1: Write the failing tests**, all `@pytest.mark.mongo_saver`, three in total (the major paths only):
+- [x] **Step 1: Write the failing tests**, all `@pytest.mark.mongo_saver`, three in total (the major paths only):
   - `test_history_ask_user_answered`, parametrized `("single_choice", answer "Tomorrow")` and `("single_choice", cancelled → "Skipped")`: run, resume, GET → `[first user message, assistant question (id ends :q), user answer (id ends :a), final assistant reply]`.
   - `test_history_ask_user_pending`: paused → `messages` is only the first user message and `pending` has one entry.
   - `test_history_two_ask_user_calls`: one `AIMessage` with two `ask_user` calls (ids `c1`, `c2`), answered together → `c1:q, c1:a, c2:q, c2:a` in that order, each answer matching its call.
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `cd backend && uv run pytest tests/test_assistant_route.py -k history_ask_user -v`
 Expected: the answered and two-call tests FAIL (no `:q`/`:a` messages); the pending test may pass already and stays as a regression check.
 
-- [ ] **Step 3: Implement** in `thread_history`: first build `answers = {m.tool_call_id: m.content for m in messages if isinstance(m, ToolMessage)}`. For every `AIMessage`, after its existing text message, loop over `m.tool_calls` where `name == "ask_user"`, skip when `c["id"]` is not in `answers` or the answer starts with `Error` (`# ponytail: the tool returns errors as text; check status if it starts raising`), else append `AssistantMessage(id=f"{c['id']}:q", content=c["args"]["question"])` and `UserMessage(id=f"{c['id']}:a", content="Skipped" if answer == SKIPPED else answer)`. The existing `m.text` guard applies to the text message only, not to this loop.
-- [ ] **Step 4: Run to verify they pass**
+- [x] **Step 3: Implement** in `thread_history`: first build `answers = {m.tool_call_id: m.content for m in messages if isinstance(m, ToolMessage)}`. For every `AIMessage`, after its existing text message, loop over `m.tool_calls` where `name == "ask_user"`, skip when `c["id"]` is not in `answers` or the answer starts with `Error` (`# ponytail: the tool returns errors as text; check status if it starts raising`), else append `AssistantMessage(id=f"{c['id']}:q", content=c["args"]["question"])` and `UserMessage(id=f"{c['id']}:a", content="Skipped" if answer == SKIPPED else answer)`. The existing `m.text` guard applies to the text message only, not to this loop.
+- [x] **Step 4: Run to verify they pass**
 
 Run: `cd backend && uv run pytest && uv run ruff check . && uv run ruff format --check .`
 Expected: all green.
 
-- [ ] **Step 5: Commit** on branch `feat/ask-user-history`, push, open the PR; the report says "contract change".
+- [x] **Step 5: Commit** on branch `feat/ask-user-history`, push, open the PR; the report says "contract change".
 
 ```bash
 git add app/assistant/routes.py tests/test_assistant_route.py
@@ -90,22 +90,22 @@ git push -u origin feat/ask-user-history
 - Consumes: `pending: Interrupt[]` state, where `Interrupt` has `id`, `reason`, `message`; Task 2's `:q`/`:a` messages (only for the history test, which uses a mocked `GET /threads/{id}`).
 - Produces: nothing later tasks use.
 
-- [ ] **Step 1: Write the failing tests**, following the existing ask tests in that file, two new and one regression guard:
+- [x] **Step 1: Write the failing tests**, following the existing ask tests in that file, two new and one regression guard:
   - `answered question stays as an assistant line`: answer a `single_choice` question → the list shows the question as an assistant line, then the answer as a user line, then the reply.
   - `failed resume removes both lines`: the resume errors → neither the question nor the answer line remains and the card is back; a retry then adds each once.
   - `confirm adds no question line`: answering a confirm shows only the `Yes`/`No` line, as today (passes already; guards the `reason !== "confirm"` rule).
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `cd frontend && npx vitest run src/pages/AssistantPanel.test.tsx -t "question"`
 Expected: the first two FAIL because no question line is added; the confirm test passes already.
 
-- [ ] **Step 3: Implement** in `answer()`: for each pending interrupt whose `reason !== "confirm"`, add `{ id: crypto.randomUUID(), role: "assistant", text: i.message }` before its answer line, and include its id in the `lineIds` passed to `turn` so the error path removes it. Update the `ponytail` comment: only confirm lines are client-only now.
-- [ ] **Step 4: Run to verify they pass**
+- [x] **Step 3: Implement** in `answer()`: for each pending interrupt whose `reason !== "confirm"`, add `{ id: crypto.randomUUID(), role: "assistant", text: i.message }` before its answer line, and include its id in the `lineIds` passed to `turn` so the error path removes it. Update the `ponytail` comment: only confirm lines are client-only now.
+- [x] **Step 4: Run to verify they pass** (browser check still pending, owner)
 
 Run: `cd frontend && npm test && npm run typecheck && npm run lint`
 Expected: all green. Then check in a browser: trigger a question, answer it, reload, reopen the thread from History; the lines match.
 
-- [ ] **Step 5: Commit** on branch `feat/ask-user-history`, push, open the PR (note: needs Task 2 merged for the reload case).
+- [x] **Step 5: Commit** on branch `feat/ask-user-history`, push, open the PR (note: needs Task 2 merged for the reload case).
 
 ```bash
 git add src/pages/AssistantPanel.tsx src/pages/AssistantPanel.test.tsx
