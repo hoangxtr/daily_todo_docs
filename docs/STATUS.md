@@ -1,6 +1,6 @@
 # Status
 
-Updated 2026-11-05. A snapshot of now; see `../WORKING.md` for how to keep it.
+Updated 2026-11-07. A snapshot of now; see `../WORKING.md` for how to keep it.
 
 ## Now
 
@@ -22,6 +22,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 
 ## Next up
 
+- FE+BE `ask_user` in history: answered questions show as an assistant line, the answer as a user line, live and after a reload. Plan `plans/2026-11-07-ask-user-history.md`. Task 1 (design) done; BE and FE in progress, one PR each.
 - FE 11F: browser walk-through of the Day page (widths 320/768/980/1024/1440, dark mode, reduced motion, keyboard, handover and Review screens). Plan `plans/done/2026-11-05-day-focus-redesign.md`, demo `design-assets/day-focus-demo.html`.
 
 - FE 8 browser walk-through: keyboard flow, widths 320/768/1024/1440, dark mode, focus rings (needs the owner or a browser tool).

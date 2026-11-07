@@ -93,7 +93,7 @@ JSON over HTTP under `/api`. Exact shapes are the builder's; these behaviours mu
 | `GET /api/health` | Liveness plus a database ping. |
 | `POST /api/assistant` | Body: AG-UI `RunAgentInput` `{threadId, runId, messages, resume?, forwardedProps: {today}}`. Streams AG-UI events as server-sent events; a resume is the same request with `resume[]`. See §7a. |
 | `GET /api/assistant/threads` | Conversations `[{id, title, updated_at, pending}]`, newest first. |
-| `GET /api/assistant/threads/{id}` | `{messages, pending}`: user and assistant text, and the open questions (or `null`). 404 if unknown. |
+| `GET /api/assistant/threads/{id}` | `{messages, pending}`: user and assistant text, each answered `ask_user` question (assistant) and its answer (user; `Skipped` if dismissed), and the open questions (or `null`). 404 if unknown. |
 
 CORS allows only `CORS_ORIGINS`. Validate dates, lengths and enum values. Store text exactly as typed.
 
@@ -151,7 +151,7 @@ Decided by the owner: a real assistant in the first build, built with LangChain,
   | `multi_choice` | `ask_user` | 1–7 strings (1–500 characters each) |
   | `free_text` | `ask_user` | a string (1–500 characters) |
 
-  Choice options are in `metadata.options` (2–6 options). Dismissing a question (`status: "cancelled"`) counts as "no" for `confirm`; `ask_user` then tells the agent the user skipped it.
+  Choice options are in `metadata.options` (2–6 options). Dismissing a question (`status: "cancelled"`) counts as "no" for `confirm`; `ask_user` then tells the agent the user skipped it. An answered `ask_user` question stays in the conversation as an assistant line and its answer as a user line, live and in the thread history; the confirm gate's `Yes`/`No` line is shown live only. **[Owner, 2026-11-07]**
 - **Protocol:** AG-UI 1.0 (`ag-ui-protocol`), events built by hand from the LangGraph stream. `RUN_STARTED`; `TEXT_MESSAGE_*`; `TOOL_CALL_*` only for the journal tools and `ask_user`; then `RUN_FINISHED` with `result: {changed}` or, when paused, `outcome: {type: "interrupt", interrupts: [...]}` (all pending questions in one event). Failure: `RUN_ERROR` with "The assistant hit a problem. Try again."
 - **Resume:** `resume[]` entries `{interruptId, status: "resolved" | "cancelled", payload?}`, matched to pending questions by id. A new message while a question is pending → 409; a resume with nothing pending → 409; ids that don't match the pending set, or a wrongly shaped answer → 422. These read the real state, not the row's `pending` flag.
 - **Input checks:** every tool validates its inputs and returns a corrective message the model can act on (what is wrong, the rule, where to get the right value). The confirm gate never asks about a call that would fail those checks.
