@@ -17,7 +17,7 @@ First release + assistant. Plans: `plans/2026-10-22-backend.md`, `plans/2026-10-
 | FE | 9 Connect assistant panel | 9A-9E merged (PR #13). Next: 9F real run in a browser (owner). |
 | FE+BE | Assistant replies render as Markdown | Merged (BE #11, FE #15): bubble uses `MarkdownView`, shared `.dj-md` styles, prompt asks for Markdown. Not yet seen in a browser (light/dark, long list, table). |
 | FE+BE | Edit task text (whole chain) + assistant `update_task` (replaces `set_task_status`) | PRs open: BE #14, FE #19; waiting for review and merge (owner). Not seen in a browser yet. |
-| BE | Assistant `update_task` gains `delete` (whole chain, confirmed first) | PR open on `feat/assistant-delete`; waiting for review and merge (owner). Flaky `test_history_two_ask_user_calls` (fails ~1 in 6 on `main` too). |
+| BE | Assistant `update_task` gains `delete` (whole chain); the confirm gate now asks for deletes only | PR open on `feat/assistant-delete`; waiting for review and merge (owner). Flaky `test_history_two_ask_user_calls` (fails ~1 in 6 on `main` too). |
 | FE | 10A-10D Assistant panel polish | Merged (PR #16). 10E browser check waiting on the owner. |
 | FE | 11-0 to 11E Day page focus redesign | Merged (PR #18). 11F browser check waiting on the owner. |
 
